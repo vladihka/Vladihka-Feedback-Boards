@@ -3,13 +3,32 @@ import { useState } from "react";
 import FeedbackItem from "./components/FeedbackItem";
 import FeedbackFormPopup from "./components/FeedbackFormPopup";
 import Button from "./components/Button";
+import FeedbackItemPopup from "./components/FeedbackItemPopup";
 
 export default function Home() {
-  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const [showFeedbackPopupForm, setShowFeedbackPopupForm] = useState(false);
+  const [showFeedbackPopuoItem, setShowFeedbackPopuoItem] = useState(null);
 
-  function openFeedbackpopup(){
-    setShowFeedbackPopup(true);
+  function openFeedbackPopupForm(){
+    setShowFeedbackPopupForm(true);
   }
+
+  function openFeedbackPopupItem(feedback){
+    setShowFeedbackPopuoItem(feedback);
+  }
+
+  const feedbacks = [
+    {
+      title: 'Please post more videos', 
+      description: 'Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym. Został po raz pierwszy użyty w XV w. przez nieznanego drukarza do wypełnienia', 
+      votesCount: 80
+    },
+    {
+      title: 'Please post more videos 2', 
+      description: 'Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym. Został po raz pierwszy użyty w XV w. przez nieznanego drukarza do wypełnienia', 
+      votesCount: 63
+    },
+  ]
 
   return (
     <main className="bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden">
@@ -20,18 +39,24 @@ export default function Home() {
       <div className="bg-gray-100 px-8 py-4 flex border-b">
         <div className="grow"></div>
         <div>
-          <Button primary onClick={openFeedbackpopup}>Make a suggestion</Button>
+          <Button primary onClick={openFeedbackPopupForm}>Make a suggestion</Button>
         </div>
       </div>
       <div className="px-8">
-        <FeedbackItem></FeedbackItem>
-        <FeedbackItem></FeedbackItem>
-        <FeedbackItem></FeedbackItem>
-        <FeedbackItem></FeedbackItem>
-        <FeedbackItem></FeedbackItem>
+        {feedbacks.map(feedback => (
+          <FeedbackItem {...feedback} 
+                        onOpen={() => openFeedbackPopupItem(feedback)}></FeedbackItem>
+        ))}
+        
       </div>
-      {showFeedbackPopup && (
-       <FeedbackFormPopup setShow={setShowFeedbackPopup}></FeedbackFormPopup>
+      {showFeedbackPopupForm && (
+       <FeedbackFormPopup setShow={setShowFeedbackPopupForm}></FeedbackFormPopup>
+      )}
+      {showFeedbackPopuoItem && (
+        <FeedbackItemPopup 
+          {...showFeedbackPopuoItem} 
+          setShow={setShowFeedbackPopuoItem}>
+        </FeedbackItemPopup>
       )}
     </main>
   )

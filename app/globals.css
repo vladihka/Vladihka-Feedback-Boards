@@ -13,3 +13,7 @@ body {
   border-width: 0 6px 12px 6px;
   border-color: transparent transparent #888 transparent;
 }
+
+.text-white > .triangle-vote-up {
+  border-color: transparent transparent #fff transparent;
+}

@@ -1,17 +1,19 @@
-export default function FeedbackItem(){
+export default function FeedbackItem({onOpen, title, description, votesCount}){
     return (
-        <div className="my-8 flex gap-8 items-center">
+        <a 
+            href="" 
+            onClick={e => {e.preventDefault();onOpen();}} 
+            className="my-8 flex gap-8 items-center">
           <div>
-            <h2 className="font-bold">Please post more videos</h2>
-              <p className="text-gray-600 text-sm">Lorem Ipsum jest tekstem stosowanym jako przykładowy wypełniacz w przemyśle poligraficznym. 
-            Został po raz pierwszy użyty w XV w. przez nieznanego drukarza do wypełnienia</p>
+            <h2 className="font-bold">{title}</h2>
+              <p className="text-gray-600 text-sm">{description}</p>
           </div>
           <div>
             <button className="shadow-sm shadow-gray-300 border rounded-md py-1 px-4 flex items-center gap-1 text-gray-600">
               <span className="triangle-vote-up"></span>
-              80
+              {votesCount}
             </button>
           </div>
-        </div>
+        </a>
     )
 }
