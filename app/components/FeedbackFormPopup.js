@@ -17,7 +17,7 @@ export default function FeedbackFormPopup({setShow}){
         axios.post('/api/feedback', {title, description, uploads}).then(() => {
             setShow(false);
         });
-    }
+    };
 
     async function handleAttachFilesInputChange(ev){
         const files = [...ev.target.files]
