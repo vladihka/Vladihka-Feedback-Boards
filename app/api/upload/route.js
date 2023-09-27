@@ -11,6 +11,7 @@ export async function POST(req){
     });
 
     const formData = await req.formData();
+    const links = [];
     for(const fileInfo of formData){
         const file = fileInfo[1];
         const name = Date.now().toString()+file.name;
@@ -26,7 +27,7 @@ export async function POST(req){
             Body: buffer,
             ContentType: file.type,
         }));
-        console.log('https://vladihka-feedback-boards-uploads.s3.amazonaws.com/'+name);
+        links.push('https://vladihka-feedback-boards-uploads.s3.amazonaws.com/'+name);
     }
-    return Response.json('ok');
+    return Response.json(links);
 }
