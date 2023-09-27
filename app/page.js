@@ -44,7 +44,7 @@ export default function Home() {
       </div>
       <div className="px-8">
         {feedbacks.map(feedback => (
-          <FeedbackItem {...feedback} 
+          <FeedbackItem key={feedback._id} {...feedback} 
                         onOpen={() => openFeedbackPopupItem(feedback)}></FeedbackItem>
         ))}
         

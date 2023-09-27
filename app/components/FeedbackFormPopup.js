@@ -63,7 +63,7 @@ export default function FeedbackFormPopup({setShow}){
                         <label className="block mt-2 mb-1 text-slate-700">Files</label>
                         <div className="flex gap-3">
                         {uploads.map(link => (
-                            <a href={link} target="_blank" className="h-16 relative">
+                            <a key={link} href={link} target="_blank" className="h-16 relative">
                                 <button
                                     onClick={ev => handleRemoveFileButtonClick(ev, link)}                              
                                     className="-right-2 -top-2 absolute bg-red-400 p-1 rounded-md text-white">
