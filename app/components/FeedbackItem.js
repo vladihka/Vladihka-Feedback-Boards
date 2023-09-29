@@ -4,14 +4,14 @@ export default function FeedbackItem({onOpen, title, description, votesCount}){
             href="" 
             onClick={e => {e.preventDefault();onOpen();}} 
             className="my-8 flex gap-8 items-center">
-          <div>
+          <div className="flex-grow">
             <h2 className="font-bold">{title}</h2>
               <p className="text-gray-600 text-sm">{description}</p>
           </div>
           <div>
             <button className="shadow-sm shadow-gray-300 border rounded-md py-1 px-4 flex items-center gap-1 text-gray-600">
               <span className="triangle-vote-up"></span>
-              {votesCount}
+              {votesCount || '0'}
             </button>
           </div>
         </a>

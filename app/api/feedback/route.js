@@ -9,3 +9,7 @@ export async function POST(request){
     await Feedback.create({title, description, uploads});
     return Response.json(jsonBody);
 }
+
+export async function GET(){
+    return Response.json(await Feedback.find());
+}
