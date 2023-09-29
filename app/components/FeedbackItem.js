@@ -1,4 +1,16 @@
+import { useState } from "react";
+import Popup from "./Popup";
+
 export default function FeedbackItem({onOpen, title, description, votesCount}){
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+
+  function handleVoteButtonClick(ev){
+    ev.stopPropagation();
+    ev.preventDefault();
+    setShowLoginPopup(true);
+  }
+
+  const isLoggedIn = false;
     return (
         <a 
             href="" 
@@ -9,7 +21,16 @@ export default function FeedbackItem({onOpen, title, description, votesCount}){
               <p className="text-gray-600 text-sm">{description}</p>
           </div>
           <div>
-            <button className="shadow-sm shadow-gray-300 border rounded-md py-1 px-4 flex items-center gap-1 text-gray-600">
+            {showLoginPopup && (
+              <Popup title={'Confirm your vote!'} narrow setShow={setShowLoginPopup}>
+                <div className="p-4">
+                  login button
+                </div>
+              </Popup>
+            )}
+            <button
+                onClick={handleVoteButtonClick} 
+                className="shadow-sm shadow-gray-300 border rounded-md py-1 px-4 flex items-center gap-1 text-gray-600">
               <span className="triangle-vote-up"></span>
               {votesCount || '0'}
             </button>
