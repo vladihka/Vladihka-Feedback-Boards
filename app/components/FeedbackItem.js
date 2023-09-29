@@ -2,11 +2,16 @@
 import { useState } from "react";
 import Popup from "./Popup";
 import Button from "./Button";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import axios from "axios";
+import { MoonLoader } from "react-spinners";
 
-export default function FeedbackItem({onOpen, _id, title, description, votesCount}){
+export default function FeedbackItem({onOpen, _id, title, description, votes, 
+  onVotesChange, parentLoadingVotes = true}){
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const isLoggedIn = false;
+  const {data:session} = useSession();
+  const [isVotesLoading, setIsVotesLoading] = useState(false);
+  const isLoggedIn = !!session?.user?.email;
 
   function handleVoteButtonClick(ev){
     ev.stopPropagation();
@@ -15,6 +20,13 @@ export default function FeedbackItem({onOpen, _id, title, description, votesCoun
       localStorage.setItem('vote_after_login', _id);
       setShowLoginPopup(true);
     }
+    else{
+      setIsVotesLoading(true);
+      axios.post('/api/vote', {feedbackId: _id}).then(async() => {
+        await onVotesChange();
+        setIsVotesLoading(false);
+      });
+    }
   }
 
   async function handleGoogleLoginClick(ev){
@@ -22,6 +34,8 @@ export default function FeedbackItem({onOpen, _id, title, description, votesCoun
     ev.preventDefault();
     await signIn('google');
   }
+
+  const iVoted = !!votes.find(v => v.userEmail === session?.user?.email);
 
     return (
         <a 
@@ -36,16 +50,24 @@ export default function FeedbackItem({onOpen, _id, title, description, votesCoun
             {showLoginPopup && (
               <Popup title={'Confirm your vote!'} narrow setShow={setShowLoginPopup}>
                 <div className="p-4">
-                  <Button onClick={handleGoogleLoginClick}>Login with Google</Button>
+                  <Button primary onClick={handleGoogleLoginClick}>Login with Google</Button>
                 </div>
               </Popup>
             )}
-            <button
+            <Button
+                primary={iVoted}
                 onClick={handleVoteButtonClick} 
-                className="shadow-sm shadow-gray-300 border rounded-md py-1 px-4 flex items-center gap-1 text-gray-600">
-              <span className="triangle-vote-up"></span>
-              {votesCount || '0'}
-            </button>
+                className="shadow-sm border">
+              {!isVotesLoading && (
+                <>
+                  <span className="triangle-vote-up"></span>
+                  {votes?.length || '0'}
+                </>
+              )}
+              {isVotesLoading && (
+                <MoonLoader size={18}></MoonLoader>
+              )}
+            </Button>
           </div>
         </a>
     )
