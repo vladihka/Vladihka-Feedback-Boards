@@ -58,7 +58,6 @@ export default function Board(){
 
     return (
         <main className="bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden">
-        {session?.user.email || 'not loggeg in'}
       <div className="bg-gradient-to-r from-cyan-400 to-blue-400 p-8">
         <h1 className="font-bold text-xl">Coding with vladihka</h1>
         <p className="text-opacity-90 text-slate-700">Help me decide what should I build next or how can i improve</p>
