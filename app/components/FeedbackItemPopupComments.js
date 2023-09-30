@@ -21,7 +21,7 @@ export default function FeedbackItemPopupComments({feedbackId}){
     return (
         <div className="p-8">
             {comments?.length > 0 && comments.map(comment => (
-                <div className="mb-8">
+                <div key={comment._id} className="mb-8">
                     <div className="flex gap-4">
                         <Avatar url={comment.user.image}></Avatar>
                         <div>
@@ -34,7 +34,7 @@ export default function FeedbackItemPopupComments({feedbackId}){
                             {comment.uploads?.length > 0 && (
                                 <div className="flex gap-2 mt-3">
                                     {comment.uploads.map(link => (
-                                        <Attachment link={link}></Attachment>
+                                        <Attachment key={link} link={link}></Attachment>
                                     ))}
                                 </div>
                             )}
