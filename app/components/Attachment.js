@@ -1,3 +1,4 @@
+import PaperClip from "./icons/PaperClip";
 import Trash from "./icons/Trash";
 
 export default function Attachment({link, showRemoveButton=false, handleRemoveFileButtonClick}){

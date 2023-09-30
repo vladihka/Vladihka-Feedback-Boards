@@ -2,16 +2,13 @@ import { useState } from "react";
 import Button from "./Button";
 import Popup from "./Popup";
 import axios from "axios";
-import PaperClip from "./icons/PaperClip";
-import Trash from "./icons/Trash";
-import { MoonLoader } from "react-spinners";
 import Attachment from "./Attachment";
+import AttachFilesButton from "./AttachFilesButton";
 
 export default function FeedbackFormPopup({setShow, onCreate}){
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [uploads, setUploads] = useState([]);
-    const [isUploading, setIsUploading] = useState(false);
 
     function handleCreatePostButtonClick(ev){
         ev.preventDefault();
@@ -21,25 +18,15 @@ export default function FeedbackFormPopup({setShow, onCreate}){
         });
     };
 
-    async function handleAttachFilesInputChange(ev){
-        const files = [...ev.target.files]
-        setIsUploading(true);
-        const data = new FormData();
-        for(const file of files){
-            data.append('file', file);
-        }
-        const res = await axios.post('/api/upload', data);
-        setUploads((existingUpload) => {
-            return [...existingUpload, ...res.data];
-        });
-        setIsUploading(false);
-    }
-
     function handleRemoveFileButtonClick(ev, link){
         ev.preventDefault();
         setUploads(currentUploads => {
             return currentUploads.filter(val => val !== link);
         });
+    }
+
+    function addNewUploads(newLinks){
+        setUploads(prevLinks => [...prevLinks, ...newLinks])
     }
 
     return (
@@ -68,22 +55,14 @@ export default function FeedbackFormPopup({setShow, onCreate}){
                             <Attachment 
                                 link={link}
                                 showRemoveButton={true} 
-                                handleAttachFilesInputChange={(ev,link) => handleRemoveFileButtonClick(ev,link)}>
+                                handleRemoveFileButtonClick={(ev,link) => handleRemoveFileButtonClick(ev,link)}>
                             </Attachment>
                         ))}
                     </div>
                 </div>
                 )}
                 <div className="flex gap-2 mt-2 justify-end">
-                    <label className="flex gap-2 py-2 px-4  cursor-pointer">
-                        {isUploading && (
-                            <MoonLoader  size={18}></MoonLoader>
-                        )}
-                        <span className={(isUploading) ? 'text-gray-300' : 'text-gray-600'}>
-                            {isUploading ? 'Uploading...' : 'Attach files'}
-                        </span>
-                        <input multiple onChange={handleAttachFilesInputChange} type="file" className="hidden"></input>
-                    </label>
+                    <AttachFilesButton onNewFiles={addNewUploads}></AttachFilesButton>
                     <Button primary onClick={handleCreatePostButtonClick}>Create post</Button>
                 </div>
             </form>
