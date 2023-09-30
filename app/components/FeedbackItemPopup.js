@@ -36,7 +36,7 @@ export default function FeedbackItemPopup({_id, title, description, setShow, vot
                         <span className="text-sm text-gray-">Attachments:</span>
                         <div className="flex gap-2">
                             {uploads.map(link => (
-                                <Attachment link={link}></Attachment>
+                                <Attachment key={link} link={link}></Attachment>
                             ))}
                         </div>
                     </div>

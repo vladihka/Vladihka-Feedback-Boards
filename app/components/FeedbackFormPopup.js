@@ -60,6 +60,7 @@ export default function FeedbackFormPopup({setShow, onCreate}){
                         <div className="flex gap-3">
                         {uploads.map(link => (
                             <Attachment 
+                                key={link}
                                 link={link}
                                 showRemoveButton={true} 
                                 handleRemoveFileButtonClick={(ev,link) => handleRemoveFileButtonClick(ev,link)}>
