@@ -15,9 +15,7 @@ export default function Board(){
   const {data:session} = useSession();
 
   useEffect(() => {
-    axios.get('/api/feedback').then(res => {
-      setFeedbacks(res.data);
-    });
+    fetchFeedbacks();
   }, []);
 
   useEffect(() => {
@@ -52,6 +50,12 @@ export default function Board(){
     setShowFeedbackPopuoItem(feedback);
   }
 
+  async function fetchFeedbacks(){
+    axios.get('/api/feedback').then(res => {
+      setFeedbacks(res.data);
+    });
+  }
+
     return (
         <main className="bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden">
         {session?.user.email || 'not loggeg in'}
@@ -76,7 +80,9 @@ export default function Board(){
         
       </div>
       {showFeedbackPopupForm && (
-       <FeedbackFormPopup setShow={setShowFeedbackPopupForm}></FeedbackFormPopup>
+       <FeedbackFormPopup 
+          onCreate={fetchFeedbacks}
+          setShow={setShowFeedbackPopupForm}></FeedbackFormPopup>
       )}
       {showFeedbackPopuoItem && (
         <FeedbackItemPopup
