@@ -2,12 +2,14 @@ import { Comment } from "@/app/models/Comment";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
-import { assetPrefix } from "@/next.config";
 
 export async function POST(req){
     mongoose.connect(process.env.MONGO_URL);
     const jsonBody = await req.json();
     const session = await getServerSession(authOptions);
+    if(!session){
+        return Response.json(false);
+    }
     const commentDoc = await Comment.create({
         text: jsonBody.text,
         uploads: jsonBody.uploads,

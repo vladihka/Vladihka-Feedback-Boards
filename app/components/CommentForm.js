@@ -3,10 +3,12 @@ import Button from "./Button";
 import AttachFilesButton from "./AttachFilesButton";
 import Attachment from "./Attachment";
 import axios from "axios";
+import { signIn, useSession } from "next-auth/react";
 
 export default function CommentForm({feedbackId, onPost}){
     const [commentText, setCommentText] = useState('');
     const [uploads, setUploads] = useState([]);
+    const {data: session} = useSession();
 
     function addUploads(newLinks){
         setUploads(prevLinks => [...prevLinks, ...newLinks]);
@@ -20,14 +22,21 @@ export default function CommentForm({feedbackId, onPost}){
 
     async function handleCommentButtonClick(ev){
         ev.preventDefault();
-        await axios.post('/api/comment', {
+        const commentData = {
             text: commentText,
             uploads,
             feedbackId,
-        })
-        setCommentText('');
-        setUploads([]);
-        onPost();
+        }
+        if(session){
+            await axios.post('/api/comment', commentData)
+            setCommentText('');
+            setUploads([]);
+            onPost();
+        }
+        else{
+            localStorage.setItem('comment_after_login', JSON.stringify(commentData));
+            await signIn('google');
+        }
     }
 
     return (
@@ -60,7 +69,7 @@ export default function CommentForm({feedbackId, onPost}){
                     onClick = {handleCommentButtonClick}
                     primary 
                     disabled={commentText === ''}>
-                    comment
+                    {session ? 'Comment' : 'Login and comment'}
                 </Button>
             </div>
         </form>
