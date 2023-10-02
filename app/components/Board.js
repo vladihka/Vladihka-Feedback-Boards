@@ -8,7 +8,7 @@ import FeedbackItemPopup from "./FeedbackItemPopup";
 
 export default function Board(){
   const [showFeedbackPopupForm, setShowFeedbackPopupForm] = useState(false);
-  const [showFeedbackPopuoItem, setShowFeedbackPopuoItem] = useState(null);
+  const [showFeedbackPopuoItem, setShowFeedbackPopupItem] = useState(null);
   const [feedbacks, setFeedbacks] = useState([]);
   const [votesLoading, setVotesLoading] = useState(false);
   const [votes, setVotes] = useState([]);
@@ -36,7 +36,7 @@ export default function Board(){
           const feedbackData = JSON.parse(feedbackToPost);
           axios.post('/api/feedback', feedbackData).then(async(res) => {
             await fetchFeedbacks();
-            setShowFeedbackPopuoItem(res.data);
+            setShowFeedbackPopupItem(res.data);
             localStorage.removeItem('post_after_login');
           });
         }
@@ -45,7 +45,7 @@ export default function Board(){
           const commentData = JSON.parse(commentToPost);
           axios.post('/api/comment', commentData).then(() => {
             axios.get('/api/feedback?id='+commentData.feedbackId).then(res => {
-              setShowFeedbackPopuoItem(res.data);
+              setShowFeedbackPopupItem(res.data);
               localStorage.removeItem('comment_after_login');
             })
           })
@@ -66,13 +66,20 @@ export default function Board(){
   }
 
   function openFeedbackPopupItem(feedback){
-    setShowFeedbackPopuoItem(feedback);
+    setShowFeedbackPopupItem(feedback);
   }
 
   async function fetchFeedbacks(){
     axios.get('/api/feedback').then(res => {
       setFeedbacks(res.data);
     });
+  }
+
+  async function handleFeedbackUpdate(newData){
+    setShowFeedbackPopupItem(prevData => {
+      return {...prevData, ...newData};
+    });
+    await fetchFeedbacks();
   }
 
     return (
@@ -107,7 +114,8 @@ export default function Board(){
           {...showFeedbackPopuoItem} 
           votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopuoItem._id)}
           onVotesChange={fetchVotes}
-          setShow={setShowFeedbackPopuoItem}>
+          setShow={setShowFeedbackPopupItem}
+          onUpdate={handleFeedbackUpdate}>
         </FeedbackItemPopup>
       )}
     </main>
