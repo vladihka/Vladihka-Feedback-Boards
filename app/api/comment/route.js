@@ -19,6 +19,21 @@ export async function POST(req){
     return Response.json(commentDoc);
 }
 
+export async function PUT(req){
+    mongoose.connect(process.env.MONGO_URL);
+    const jsonBody = await req.json();
+    const session = await getServerSession(authOptions);
+    if(!session){
+        return Response.json(false);
+    }
+    const {id, text, uploads} = jsonBody;
+    const updatedCoometDoc = await Comment.findOneAndUpdate(
+        {userEmail:session.user.email, _id: id},
+        {text, uploads},
+    )
+    return Response.json(updatedCoometDoc);
+}
+
 export async function GET(req){
     mongoose.connect(process.env.MONGO_URL);
     const url = new URL(req.url);
@@ -26,14 +41,7 @@ export async function GET(req){
         const result = await Comment
             .find({feedbackId:url.searchParams.get('feedbackId')})
             .populate('user')
-        return Response.json(
-            result.map(doc => {
-                const {userEmail, ...commentWithoutEmail} = doc.toJSON();
-                const {email, ...userWithoutEmail} = commentWithoutEmail.user;
-                commentWithoutEmail.user = userWithoutEmail;
-                return commentWithoutEmail;
-            })
-        )
+        return Response.json(result)
     }
     return Response.json(false);
 }
