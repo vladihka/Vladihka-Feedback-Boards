@@ -13,6 +13,7 @@ export default function Board(){
   const [votesLoading, setVotesLoading] = useState(false);
   const [votes, setVotes] = useState([]);
   const {data:session} = useSession();
+  const [sort, seSort] = useState(votes);
 
   useEffect(() => {
     fetchFeedbacks();
@@ -21,6 +22,10 @@ export default function Board(){
   useEffect(() => {
     fetchVotes();
   }, [feedbacks]);
+
+  useEffect(() => {
+    fetchFeedbacks();
+  }, [sort])
 
   useEffect(() => {
     if(session?.user?.email){
@@ -70,7 +75,7 @@ export default function Board(){
   }
 
   async function fetchFeedbacks(){
-    axios.get('/api/feedback').then(res => {
+    axios.get('/api/feedback?sort='+sort).then(res => {
       setFeedbacks(res.data);
     });
   }
@@ -89,7 +94,17 @@ export default function Board(){
         <p className="text-opacity-90 text-slate-700">Help me decide what should I build next or how can i improve</p>
       </div>
       <div className="bg-gray-100 px-8 py-4 flex border-b">
-        <div className="grow"></div>
+        <div className="grow flex items-center">
+          <span className="text-gray-400 text-sm">Sort by:</span>
+           <select 
+              value={sort}
+              onChange={ev => seSort(ev.target.value)}
+              className="bg-transparent py-2 text-gray-600">
+            <option value="votes">Most voted</option>
+            <option value="latest">Latest</option>
+            <option value="oldest">Oldest</option>
+          </select>
+        </div>
         <div>
           <Button primary onClick={openFeedbackPopupForm}>Make a suggestion</Button>
         </div>
