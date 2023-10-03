@@ -84,14 +84,15 @@ export default function FeedbackItemPopup({_id, title, description, setShow, vot
                 )}
                 {isEditMode && (
                     <textarea 
-                        className="block w-full mb-2 mt-2 border rounded-md"
+                        className="block w-full mb-2 mt-2 border rounded-md h-36"
                         value={newDescriptiopn}
                         onChange={ev => setNewDescriptiopn(ev.target.value)}
                     ></textarea>
                 )}
                 {!isEditMode && (
-                    <p className="text-gray-600">
-                        {description}
+                    <p 
+                        className="text-gray-600" 
+                        dangerouslySetInnerHTML={{__html:description.replace(/\n/gi, "<br />")}}>
                     </p>
                 )}                
                 {uploads?.length > 0 && (

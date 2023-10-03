@@ -36,6 +36,7 @@ export default function FeedbackItem({onOpen, _id, title, description, votes,
   }
 
   const iVoted = !!votes.find(v => v.userEmail === session?.user?.email);
+  const shortDesc = description.substring(0, 200);
 
     return (
         <a 
@@ -44,7 +45,10 @@ export default function FeedbackItem({onOpen, _id, title, description, votes,
             className="my-8 flex gap-8 items-center">
           <div className="flex-grow">
             <h2 className="font-bold">{title}</h2>
-              <p className="text-gray-600 text-sm">{description}</p>
+              <p className="text-gray-600 text-sm">
+                {shortDesc}
+                {shortDesc.length < description.length ? '...' : ''}
+              </p>
           </div>
           <div>
             {showLoginPopup && (
