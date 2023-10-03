@@ -40,19 +40,24 @@ export async function GET(req){
         )
     }
     else{
-        const sortParam = url.searchParams.get('sort')
+        const sortParam = url.searchParams.get('sort');
+        const loadedRows = url.searchParams.get('loadedRows');
         let sortDef;
         if(sortParam === 'latest'){
-            sortDef = {createdAt:-1};
+            sortDef = {createdAt: -1};
         }
         if(sortParam === 'oldest'){
-            sortDef = {createdAt:1};
+            sortDef = {createdAt: 1};
         }
         if(sortParam === 'votes'){
             sortDef = {votesCountCached: -1};
         }
         return Response.json(
-            await Feedback.find(null,null,{sort:sortDef}).populate('user')
+            await Feedback.find(null,null,{
+                sort: sortDef,
+                skip: loadedRows,
+                limit: 10,
+            }).populate('user')
         );
     }
 
