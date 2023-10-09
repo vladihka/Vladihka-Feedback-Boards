@@ -8,10 +8,11 @@ import FeedbackItemPopup from "./FeedbackItemPopup";
 import { MoonLoader } from "react-spinners";
 import Search from "./icons/Search";
 import { debounce } from "lodash";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Board(){
   const [showFeedbackPopupForm, setShowFeedbackPopupForm] = useState(false);
-  const [showFeedbackPopuoItem, setShowFeedbackPopupItem] = useState(null);
+  const [showFeedbackPopupItem, setShowFeedbackPopupItem] = useState(null);
   const [feedbacks, setFeedbacks] = useState([]);
   const [votesLoading, setVotesLoading] = useState(false);
   const [votes, setVotes] = useState([]);
@@ -28,6 +29,8 @@ export default function Board(){
   const waitingRef = useRef(false);
   const [waiting, setWaiting] = useState(true);
   const [didMount, setDidMount] = useState(false);
+  const pathname = usePathname();
+  const [feedbacksFetchCount, setFeedbacksFetchCount] = useState(0);
 
   useEffect(() => {
     fetchVotes();
@@ -50,6 +53,27 @@ export default function Board(){
     waitingRef.current = true;
     debouncedFetchFeedbacksRef.current();
   }, [sortOrFilter, searchPhrase, didMount])
+
+  useEffect(() => {
+    if(!didMount){
+      return;
+    }
+    if(showFeedbackPopupItem){
+      window.history.pushState({}, '', `/feedback/${showFeedbackPopupItem._id}`);
+    }
+    else{
+      window.history.pushState({}, '', `/`);
+    }
+  }, [showFeedbackPopupItem])
+
+  useEffect(() => {
+    if(feedbacksFetchCount === 1 && /^\/feedback\/[a-z0-9]+/.test(pathname)){
+      const feedbackId = pathname.replace('/feedback/', '');
+      axios.get('/api/feedback?id='+feedbackId).then(response => {
+        setShowFeedbackPopupItem(response.data);
+      });
+    }
+  }, [feedbacksFetchCount])
 
   useEffect(() => {
     if(session?.user?.email){
@@ -128,6 +152,7 @@ export default function Board(){
     setFetchingFeedbacks(true);
     axios.get(`/api/feedback?sortOrFilter=${sortOrFilterRef.current}&loadedRows=${loadedRows.current}
     &search=${searchPhraseRef.current}`).then(res => {
+      setFeedbacksFetchCount(prevCount => prevCount + 1);
       if(append){
         setFeedbacks(currentFeedbacks => [...currentFeedbacks, ...res.data])
       }
@@ -215,10 +240,10 @@ export default function Board(){
           onCreate={fetchFeedbacks}
           setShow={setShowFeedbackPopupForm}></FeedbackFormPopup>
       )}
-      {showFeedbackPopuoItem && (
+      {showFeedbackPopupItem && (
         <FeedbackItemPopup
-          {...showFeedbackPopuoItem} 
-          votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopuoItem._id)}
+          {...showFeedbackPopupItem} 
+          votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id)}
           onVotesChange={fetchVotes}
           setShow={setShowFeedbackPopupItem}
           onUpdate={handleFeedbackUpdate}>
