@@ -16,9 +16,9 @@ export default function Board(){
   const [votesLoading, setVotesLoading] = useState(false);
   const [votes, setVotes] = useState([]);
   const {data:session} = useSession();
-  const [sort, setSort] = useState('votes');
+  const [sortOrFilter, setSortOrFilter] = useState('votes');
   const loadedRows = useRef(0);
-  const sortRef = useRef('votes');
+  const sortOrFilterRef = useRef('votes');
   const fetchingFeedbacksRef = useRef(false);
   const [fetchingFeedbacks, setFetchingFeedbacks] = useState(false);
   const everythingLoadedRef = useRef(false);
@@ -26,19 +26,21 @@ export default function Board(){
   const searchPhraseRef = useRef('');
   const debouncedFetchFeedbacksRef = useRef(debounce(fetchFeedbacks,300));
   const waitingRef = useRef(false);
-  const [waiting, setWaiting] = useState(false);
-
-  useEffect(() => {
-    fetchFeedbacks();
-  }, []);
+  const [waiting, setWaiting] = useState(true);
+  const [didMount, setDidMount] = useState(false);
 
   useEffect(() => {
     fetchVotes();
   }, [feedbacks]);
 
   useEffect(() => {
+    if(!didMount){
+      fetchFeedbacks();
+      setDidMount(true);
+      return;
+    }
     loadedRows.current = 0;
-    sortRef.current = sort;
+    sortOrFilterRef.current = sortOrFilter;
     searchPhraseRef.current = searchPhrase;
     everythingLoadedRef.current = false;
     if(feedbacks.length > 0){
@@ -47,7 +49,7 @@ export default function Board(){
     setWaiting(true);
     waitingRef.current = true;
     debouncedFetchFeedbacksRef.current();
-  }, [sort, searchPhrase])
+  }, [sortOrFilter, searchPhrase, didMount])
 
   useEffect(() => {
     if(session?.user?.email){
@@ -124,7 +126,7 @@ export default function Board(){
     if(everythingLoadedRef.current) return;
     fetchingFeedbacksRef.current = true;
     setFetchingFeedbacks(true);
-    axios.get(`/api/feedback?sort=${sortRef.current}&loadedRows=${loadedRows.current}
+    axios.get(`/api/feedback?sortOrFilter=${sortOrFilterRef.current}&loadedRows=${loadedRows.current}
     &search=${searchPhraseRef.current}`).then(res => {
       if(append){
         setFeedbacks(currentFeedbacks => [...currentFeedbacks, ...res.data])
@@ -162,12 +164,16 @@ export default function Board(){
       <div className="bg-gray-100 px-8 py-4 flex border-b items-center">
         <div className="grow flex items-center gap-4 text-gray-400">
            <select 
-              value={sort}
-              onChange={ev => {setSort(ev.target.value)}}
+              value={sortOrFilter}
+              onChange={ev => {setSortOrFilter(ev.target.value)}}
               className="bg-transparent py-2">
             <option value="votes">Most voted</option>
             <option value="latest">Latest</option>
             <option value="oldest">Oldest</option>
+            <option value="planned">Planned</option>
+            <option value="in_progress">In progress</option>
+            <option value="complete">Complete</option>
+            <option value="archived">Archived</option>
           </select>
           <div className="relative">
             <Search className="w-4 h-4 absolute top-3 left-2 pointer-events-none"></Search>
@@ -184,7 +190,7 @@ export default function Board(){
         </div>
       </div>
       <div className="px-8">
-        {(!fetchingFeedbacks && !waiting) && feedbacks?.length === 0 && (
+        {feedbacks?.length === 0 && !fetchingFeedbacks && !waiting &&  (
           <div className="py-8 text-4xl text-gray-200">
             Nothing found:(
           </div>

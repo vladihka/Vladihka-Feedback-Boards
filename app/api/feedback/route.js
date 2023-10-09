@@ -47,21 +47,27 @@ export async function GET(req){
         )
     }
     else{
-        const sortParam = url.searchParams.get('sort');
+        const sortOrFilter = url.searchParams.get('sortOrFilter');
         const loadedRows = url.searchParams.get('loadedRows');
         const searchPhrase = url.searchParams.get('search');
-        let sortDef;
-        if(sortParam === 'latest'){
+        let sortDef = {};
+        let filter = {};
+        if(sortOrFilter === 'latest'){
             sortDef = {createdAt: -1};
         }
-        if(sortParam === 'oldest'){
+        if(sortOrFilter === 'oldest'){
             sortDef = {createdAt: 1};
         }
-        if(sortParam === 'votes'){
+        if(sortOrFilter === 'votes'){
             sortDef = {votesCountCached: -1};
         }
 
-        let filter = null;
+        if(['planned', 'in_progress', 'complete', 'archived'].includes(sortOrFilter)){
+            filter.status = sortOrFilter;
+        } else{
+            filter.status = {$in:['new', null]}
+        }
+
         if(searchPhrase){
             const comments = await Comment.find({text:{$regex:'.*'+searchPhrase+'.*'}}, 'feedbackId', {limit:10})
             filter = {
