@@ -17,16 +17,22 @@ export async function POST(request){
 
 export async function PUT(request){
         const jsonBody = await request.json();
-        const {title, description, uploads, id} = jsonBody;
+        const {title, description, uploads, id, status} = jsonBody;
         const mongoUrl = process.env.MONGO_URL;
         mongoose.connect(mongoUrl);
         const session = await getServerSession(authOptions);
         if(!session){
             return Response.json(false);
         }
+        const isAdmin = session.user.email === 'vladihka58@gmail.com';
+        const updateData = status ? {status} : {title, description, uploads};
+        const filter = {_id:id};
+        if(!isAdmin) {
+            filter.userEmail = session.user.email;
+        }
         const newFeedbackDoc = await Feedback.updateOne(
-            {_id:id, userEmail:session.user.email}, 
-            {title, description, uploads},
+            filter, 
+            updateData,
         );
         return Response.json(newFeedbackDoc);
 }

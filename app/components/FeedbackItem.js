@@ -6,7 +6,7 @@ import { signIn, useSession } from "next-auth/react";
 import axios from "axios";
 import { MoonLoader } from "react-spinners";
 
-export default function FeedbackItem({onOpen, _id, title, description, votes, 
+export default function FeedbackItem({onOpen, _id, status, title, description, votes, 
   onVotesChange, parentLoadingVotes = true}){
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const {data:session} = useSession();
@@ -37,6 +37,13 @@ export default function FeedbackItem({onOpen, _id, title, description, votes,
 
   const iVoted = !!votes.find(v => v.userEmail === session?.user?.email);
   const shortDesc = description.substring(0, 200);
+  const statusLabel = status[0].toUpperCase() + status.substring(1).replace('_', ' ');
+  let statusColor = 'bg-gray-400';
+  if(status === 'planned') statusColor = 'bg-emerald-200';
+  if(status === 'in_progress') statusColor = 'bg-amber-400';
+  if(status === 'complete') statusColor = 'bg-green-600';
+  if(status === 'archived') statusColor = 'bg-purple-400';
+
 
     return (
         <a 
@@ -45,10 +52,18 @@ export default function FeedbackItem({onOpen, _id, title, description, votes,
             className="my-8 flex gap-8 items-center">
           <div className="flex-grow">
             <h2 className="font-bold">{title}</h2>
-              <p className="text-gray-600 text-sm">
+              <p className="text-gray-400 text-sm">
                 {shortDesc}
                 {shortDesc.length < description.length ? '...' : ''}
               </p>
+              <div>
+                {status !== 'new' && (
+                  <div className= "inline-flex gap-1 items-center text-sm">
+                    <div className={statusColor + " w-2 h-2 rounded-full"}></div>
+                    {statusLabel}
+                  </div>
+                )}
+              </div>
           </div>
           <div>
             {showLoginPopup && (

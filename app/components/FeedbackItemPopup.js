@@ -2,7 +2,7 @@ import axios from "axios";
 import Button from "./Button";
 import FeedbackItemPopupComments from "./FeedbackItemPopupComments";
 import Popup from "./Popup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MoonLoader } from "react-spinners";
 import { useSession } from "next-auth/react";
 import Tick from "./icons/Tick";
@@ -11,7 +11,7 @@ import Edit from "./icons/Edit";
 import AttachFilesButton from "./AttachFilesButton";
 import Trash from "./icons/Trash";
 
-export default function FeedbackItemPopup({_id, title, description, setShow, votes, onVotesChange, 
+export default function FeedbackItemPopup({_id, title, description, status, setShow, votes, onVotesChange, 
     uploads, user, onUpdate}){
     const [isvotesLoading, setIsVotesLoading] = useState(false);
     const {data:session} = useSession();
@@ -19,6 +19,18 @@ export default function FeedbackItemPopup({_id, title, description, setShow, vot
     const [newTitle, setNewTitle] = useState(title);
     const [newDescriptiopn, setNewDescriptiopn] = useState(description);
     const [newUploads, setNewUploads] = useState(uploads);
+    const isAdmin = session?.user?.email === 'vladihka58@gmail.com';
+    const [newStatus, setNewStatus] = useState(status || 'new');
+    
+    useEffect(() => {
+        if(newStatus === status){
+            return;
+        }
+        const data = {id: _id, title, description, status:newStatus, uploads};
+        axios.put('/api/feedback', data).then(() => {
+            onUpdate({status:newStatus});
+        })
+    }, [newStatus]);
 
     function handleVoteButtonClick(){
         setIsVotesLoading(true);
@@ -92,7 +104,7 @@ export default function FeedbackItemPopup({_id, title, description, setShow, vot
                 {!isEditMode && (
                     <p 
                         className="text-gray-600" 
-                        dangerouslySetInnerHTML={{__html:description.replace(/\n/gi, "<br />")}}>
+                        dangerouslySetInnerHTML={{__html:(description || '').replace(/\n/gi, "<br />")}}>
                     </p>
                 )}                
                 {uploads?.length > 0 && (
@@ -131,6 +143,18 @@ export default function FeedbackItemPopup({_id, title, description, setShow, vot
                         <Edit className="w-4 h-4"></Edit>
                         Edit
                     </Button>
+                )}
+                {!isEditMode && isAdmin && (
+                    <select 
+                        value={newStatus} 
+                        onChange={ev => setNewStatus(ev.target.value)} 
+                        className="bg-gray-200 rounded-md">
+                        <option value="new">new</option>
+                        <option value="planned">planned</option>
+                        <option value="in_progress">in progress</option>
+                        <option value="complete">complete</option>
+                        <option value="archived">archived</option>
+                    </select>
                 )}
                 {!isEditMode && (
                     <Button primary onClick={handleVoteButtonClick}>
