@@ -2,13 +2,15 @@
 
 import Board from "@/app/components/Board"
 import Header from "@/app/components/Header"
+import useBoardName from "@/app/hooks/UseBoardName"
 import { SessionProvider } from "next-auth/react"
 
-export default function FeedbackPage(){
+export default function BoardPage(){
+    const boardName = useBoardName();
     return (
         <SessionProvider>
             <Header></Header>
-            <Board></Board>
+            <Board name={boardName}></Board>
         </SessionProvider>
     )
 }

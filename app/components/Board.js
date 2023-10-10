@@ -9,7 +9,7 @@ import BoardBody from "./BoardBody";
 import { feedbackOpenNeeded, fetchSpecificFeedbacks, notifyIfBottomOfThePage, postLoginActions, fetchFeedback } from "../libs/boardFunctions";
 import { FeedbacksFetchContext } from "../hooks/FeedbackFetchContext";
 
-export default function Board(){
+export default function Board({name}){
   
     const [showFeedbackPopupItem, setShowFeedbackPopupItem] = useState(null);
     const [feedbacks, setFeedbacks] = useState([]);
@@ -61,7 +61,9 @@ export default function Board(){
         if(feedbacksFetchCount === 0){
             return;
         }
-        const url = showFeedbackPopupItem ? `/feedback/${showFeedbackPopupItem._id}` : `/`;
+        const url = showFeedbackPopupItem 
+            ? `/board/${name}/feedback/${showFeedbackPopupItem._id}` 
+            : `/board/`+name;
         window.history.pushState({}, '', url);
     }, [showFeedbackPopupItem]);
 
@@ -86,6 +88,7 @@ export default function Board(){
         fetchingFeedbacksRef.current = true;
         setFetchingFeedbacks(true);
         fetchSpecificFeedbacks({
+            boardName: name,
             sortOrFilter: sortOrFilterRef.current,
             loadedRows: loadedRows.current,
             search: searchPhraseRef.current,
@@ -131,6 +134,7 @@ export default function Board(){
             <FeedbacksFetchContext.Provider value={{
                 sortOrFilter,
                 searchPhrase,
+                boardName: name,
                 setSortOrFilter,
                 setSearchPhrase,}}> 
                 <BoardHeader onNewFeedback={fetchFeedbacks}></BoardHeader>

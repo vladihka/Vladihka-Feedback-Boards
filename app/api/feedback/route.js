@@ -50,8 +50,9 @@ export async function GET(req){
         const sortOrFilter = url.searchParams.get('sortOrFilter');
         const loadedRows = url.searchParams.get('loadedRows');
         const searchPhrase = url.searchParams.get('search');
+        const boardName = url.searchParams.get('boardName');
         let sortDef = {};
-        let filter = {};
+        let filter = {boardName};
         if(sortOrFilter === 'latest'){
             sortDef = {createdAt: -1};
         }
