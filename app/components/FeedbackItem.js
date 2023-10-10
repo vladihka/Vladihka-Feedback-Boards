@@ -69,12 +69,12 @@ export default function FeedbackItem({onOpen, _id, status, title, description, v
             {showLoginPopup && (
               <Popup title={'Confirm your vote!'} narrow setShow={setShowLoginPopup}>
                 <div className="p-4">
-                  <Button primary onClick={handleGoogleLoginClick}>Login with Google</Button>
+                  <Button primary={1} onClick={handleGoogleLoginClick}>Login with Google</Button>
                 </div>
               </Popup>
             )}
             <Button
-                primary={iVoted}
+                primary={iVoted ? 1 : undefined}
                 onClick={handleVoteButtonClick} 
                 className="shadow-sm border">
               {!isVotesLoading && (

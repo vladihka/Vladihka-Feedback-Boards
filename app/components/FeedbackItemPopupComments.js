@@ -120,7 +120,7 @@ export default function FeedbackItemPopupComments({feedbackId}){
                                             <Attachment
                                                 handleRemoveFileButtonClick={handleRemoveFileButtonClick}
                                                 showRemoveButton={editingComment?._id === comment?._id} 
-                                                key={link} 
+                                                key={'edit'+comment._id+link} 
                                                 link={link}>
                                             </Attachment>
                                         ))}

@@ -59,7 +59,7 @@ export async function GET(req){
             sortDef = {createdAt: 1};
         }
         if(sortOrFilter === 'votes'){
-            sortDef = {votesCountCached: -1};
+            sortDef = {votesCountCached: -1, createdAt: -1};
         }
 
         if(['planned', 'in_progress', 'complete', 'archived'].includes(sortOrFilter)){

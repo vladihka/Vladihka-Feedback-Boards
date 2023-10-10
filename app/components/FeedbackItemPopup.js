@@ -113,7 +113,7 @@ export default function FeedbackItemPopup({_id, title, description, status, setS
                         <div className="flex gap-2">
                             {(isEditMode ? newUploads : uploads).map(link => (
                                 <Attachment 
-                                    key={link} 
+                                    key={_id+link} 
                                     link={link} 
                                     showRemoveButton={isEditMode}
                                     handleRemoveFileButtonClick={handleVoteButtonClick}>
@@ -132,7 +132,7 @@ export default function FeedbackItemPopup({_id, title, description, status, setS
                             Cancel
                         </Button>
                         <Button 
-                            primary 
+                            primary={1}
                             onClick={handleSaveButton}>
                             Save chabnges
                         </Button>
@@ -157,7 +157,7 @@ export default function FeedbackItemPopup({_id, title, description, status, setS
                     </select>
                 )}
                 {!isEditMode && (
-                    <Button primary onClick={handleVoteButtonClick}>
+                    <Button primary={1} onClick={handleVoteButtonClick}>
                         {isvotesLoading && (
                             <MoonLoader size={18}></MoonLoader>
                         )}

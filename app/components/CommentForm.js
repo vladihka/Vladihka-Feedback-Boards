@@ -67,7 +67,7 @@ export default function CommentForm({feedbackId, onPost}){
                 <AttachFilesButton onNewFiles={addUploads}></AttachFilesButton>
                 <Button 
                     onClick = {handleCommentButtonClick}
-                    primary 
+                    primary={1}
                     disabled={commentText === ''}>
                     {session ? 'Comment' : 'Login and comment'}
                 </Button>
