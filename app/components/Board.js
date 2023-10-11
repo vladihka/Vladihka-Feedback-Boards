@@ -63,7 +63,7 @@ export default function Board({name}){
         }
         const url = showFeedbackPopupItem 
             ? `/board/${name}/feedback/${showFeedbackPopupItem._id}` 
-            : `/board/`+name;
+            : '/board/'+name;
         window.history.pushState({}, '', url);
     }, [showFeedbackPopupItem]);
 

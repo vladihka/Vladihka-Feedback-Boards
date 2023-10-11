@@ -6,12 +6,12 @@ import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function POST(request){
     const jsonBody = await request.json();
-    const {title, description, uploads} = jsonBody;
+    const {title, description, uploads, boardName} = jsonBody;
     const mongoUrl = process.env.MONGO_URL;
     mongoose.connect(mongoUrl);
     const session = await getServerSession(authOptions);
     const userEmail = session.user.email;
-    const feedbackDoc = await Feedback.create({title, description, uploads, userEmail});
+    const feedbackDoc = await Feedback.create({title, description, uploads, userEmail, boardName});
     return Response.json(feedbackDoc);
 }
 
@@ -52,7 +52,7 @@ export async function GET(req){
         const searchPhrase = url.searchParams.get('search');
         const boardName = url.searchParams.get('boardName');
         let sortDef = {};
-        let filter = {boardName};
+        const filter = {boardName};
         if(sortOrFilter === 'latest'){
             sortDef = {createdAt: -1};
         }
@@ -71,13 +71,11 @@ export async function GET(req){
 
         if(searchPhrase){
             const comments = await Comment.find({text:{$regex:'.*'+searchPhrase+'.*'}}, 'feedbackId', {limit:10})
-            filter = {
-                $or:[
-                    {title:{$regex:'.*'+searchPhrase+'.*'}},
-                    {description:{$regex:'.*'+searchPhrase+'.*'}},
-                    {_id:comments.map(c => c.feedbackId)}
-                ]
-            }
+            filter['$or'] = [
+                {title:{$regex:'.*'+searchPhrase+'.*'}},
+                {description:{$regex:'.*'+searchPhrase+'.*'}},
+                {_id:comments.map(c => c.feedbackId)}
+            ]
         }
 
         return Response.json(
