@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
                 {!isBoardPage && (
                     <main className="mx-auto max-w-4xl">
                         <header className="flex text-gray-600 gap-8 h-24 items-center">
-                            <Link href="" className="text-primary font-bold text-xl">FeedbackBoard</Link>
+                            <Link href="/" className="text-primary font-bold text-xl">FeedbackBoard</Link>
                             <nav className="flex gap-4 grow">
                             <Link href={'/'}>Home</Link>
                             <Link href={'/pricing'}>Pricing</Link>
