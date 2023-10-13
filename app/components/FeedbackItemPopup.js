@@ -10,17 +10,29 @@ import Attachment from "./Attachment";
 import Edit from "./icons/Edit";
 import AttachFilesButton from "./AttachFilesButton";
 import Trash from "./icons/Trash";
+import {isBoardAdmin, useIsBoardAdmin} from "@/app/hooks/UseBoardInfo";
+import useBoardName from "@/app/hooks/UseBoardName";
 
 export default function FeedbackItemPopup({_id, title, description, status, setShow, votes, onVotesChange, 
     uploads, user, onUpdate}){
-    const [isvotesLoading, setIsVotesLoading] = useState(false);
+    const [isVotesLoading, setIsVotesLoading] = useState(false);
     const {data:session} = useSession();
     const [isEditMode, setIsEditMode] = useState(false);
     const [newTitle, setNewTitle] = useState(title);
     const [newDescriptiopn, setNewDescriptiopn] = useState(description);
     const [newUploads, setNewUploads] = useState(uploads);
-    const isAdmin = session?.user?.email === 'vladihka58@gmail.com';
+    //const isAdmin = session?.user?.email === 'vladihka58@gmail.com';
     const [newStatus, setNewStatus] = useState(status || 'new');
+    const boardName = useBoardName();
+    const [isAdmin, setIsAdmin] = useState(undefined);
+
+    useEffect(() => {
+        if(boardName){
+            isBoardAdmin(boardName).then(resultIsAdmin => {
+                setIsAdmin(resultIsAdmin);
+            })
+        }
+    }, [boardName]);
     
     useEffect(() => {
         if(newStatus === status){
@@ -158,10 +170,10 @@ export default function FeedbackItemPopup({_id, title, description, status, setS
                 )}
                 {!isEditMode && (
                     <Button primary={1} onClick={handleVoteButtonClick}>
-                        {isvotesLoading && (
+                        {isVotesLoading && (
                             <MoonLoader size={18}></MoonLoader>
                         )}
-                        {!isvotesLoading && (
+                        {!isVotesLoading && (
                             <>
                                 {iVoted && (
                                     <>
