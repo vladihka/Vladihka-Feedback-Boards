@@ -8,7 +8,7 @@ export default function Home() {
                 <p className="text-gray-600 mb-8 max-w-xl mx-auto">Experience a seamless, collaborative solution for user requests. Say goodbye to outdated
                     spreadsheets and chaotic boards. Empower your customers, gain priceless insights.</p>
                 <Link 
-                    href={'/register'}
+                    href={'/account'}
                     className="bg-primary text-white px-6 py-4 rounded-md">Try for free &rarr;</Link>
             </div>
             <div className="relative">

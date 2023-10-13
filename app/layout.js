@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import Link from "next/link";
 import {headers} from "next/headers"
 import LandingHeader from "@/app/components/LandingHeader";
+import AuthProvider from "@/app/hooks/AuthProvider";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,8 +27,10 @@ export default function RootLayout({ children }) {
                 )} 
                 {!isBoardPage && (
                     <main className="mx-auto max-w-4xl px-4">
-                        <LandingHeader></LandingHeader>
-                        {children}
+                        <AuthProvider>
+                            <LandingHeader></LandingHeader>
+                            {children}
+                        </AuthProvider>
                     </main>
                 )}
             </body>
