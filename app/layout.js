@@ -1,9 +1,9 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
-import Link from "next/link";
 import {headers} from "next/headers"
-import LandingHeader from "@/app/components/LandingHeader";
+import Header from "@/app/components/Header";
 import AuthProvider from "@/app/hooks/AuthProvider";
+import {AppContextProvider} from "@/app/hooks/AppContext";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -13,26 +13,18 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
-    const headersList = headers();
-    const path = headersList.get('x-invoke-path');
-    const isBoardPage = path?.startsWith('/board/');
-    // console.log(path);
+
     return (
         <html lang="en">
-            <body className={inter.className + (isBoardPage ? '' :  ' bg-bgGray')}>
-                {isBoardPage && (
-                    <>
-                        {children}
-                    </>
-                )} 
-                {!isBoardPage && (
-                    <main className="mx-auto max-w-4xl px-4">
+            <body>
+                <div className="mx-auto max-w-4xl px-4">
+                    <AppContextProvider>
                         <AuthProvider>
-                            <LandingHeader></LandingHeader>
+                            <Header></Header>
                             {children}
                         </AuthProvider>
-                    </main>
-                )}
+                    </AppContextProvider>
+                </div>
             </body>
         </html>
     )

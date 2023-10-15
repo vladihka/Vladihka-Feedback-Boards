@@ -10,7 +10,7 @@ export default function Popup({setShow, children, title, narrow}){
 
     return (
         <div 
-            className="fixed z-10 inset-0 bg-white md:bg-black md:bg-opacity-80 flex md:items-center"
+            className="fixed z-40 inset-0 bg-white md:bg-black md:bg-opacity-80 flex md:items-center"
             onClick={close}>
             <button onClick={close} className="hidden md:block fixed top-4 right-4 text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">

@@ -1,11 +1,23 @@
 import Bars2 from "@/app/components/icons/Bars2";
 import Link from "next/link";
 import {useState} from "react";
-import {signIn, useSession} from "next-auth/react";
+import {signIn, signOut, useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 export default function MobileNav(){
     const [navOpen, setNavOpen] = useState(false);
     const {status:sessionStatus} = useSession();
+    const router = useRouter();
+
+    function login(){
+        const isBoardPage = window.location.href.includes('/board/')
+        if(isBoardPage){
+            signIn('google');
+        }
+        else{
+            router.push('/account');
+        }
+    }
 
     return(
         <>
@@ -27,15 +39,21 @@ export default function MobileNav(){
                             <Link className="block py-4" href={'/help'}>Help</Link>
                             {sessionStatus === 'unauthenticated' && (
                                 <>
-                                    <Link className="block py-4 w-full uppercase"
-                                          href={'/account'}>Login</Link>
-                                    <Link className="block py-4 w-full uppercase"
-                                          href={'/account'}>Register</Link>
+                                    <button className="block py-4 w-full uppercase"
+                                          onClick={login}>Login</button>
+                                    <button className="block py-4 w-full uppercase"
+                                          onClick={login}>Register</button>
                                 </>
                             )}
                             {sessionStatus === 'authenticated' && (
-                                <Link className="block py-4 w-full uppercase"
-                                      href={'/account'}>Account</Link>
+                                <>
+                                    <Link className="block py-4 w-full uppercase"
+                                          href={'/account'}>Account</Link>
+                                    <button className="block py-4 w-full uppercase"
+                                            onClick={() => signOut()}>
+                                            Logout
+                                    </button>
+                                </>
                             )}
                         </nav>
                     </div>

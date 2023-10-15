@@ -1,4 +1,8 @@
+'use client'
+import {useWideHeader} from "@/app/hooks/AppContext";
+
 export default function Pricing(){
+    useWideHeader();
     return(
         <section className="my-16">
             <h1 className="text-center text-4xl mb-8">Simple pricing</h1>

@@ -1,46 +1,22 @@
 'use client'
-import { signIn, signOut, useSession } from "next-auth/react"
-import Button from "./Button";
-import Login from "./icons/Login";
-import Logout from "./icons/Logout";
+import MobileNav from "@/app/components/MobileNav";
+import DesktopNav from "@/app/components/DesktopNav";
+import {useContext} from "react";
+import {AppContext} from "@/app/hooks/AppContext";
 
 export default function Header(){
-    const {data:session} = useSession();
-    const isLoggedIn = !!session?.user?.email;
 
-    function logout(){
-        signOut();
-    }
+    const {narrowHeader} = useContext(AppContext);
 
-    function login(){
-        signIn('google');
-    }
+    return (
+        <>
+            <header className={"flex text-gray-600 gap-8 h-24 " +
+                "items-center max-auto" + (narrowHeader ? ' max-w-2xl' : '')}>
+                <DesktopNav></DesktopNav>
+                <div className="grow md:hidden"></div>
+                <MobileNav></MobileNav>
+            </header>
+        </>
 
-    return(
-        <div className="max-w-2xl mx-auto flex justify-end p-2 gap-4 items-center">
-            {isLoggedIn && (
-                <>
-                    <span>
-                        Hello, {session.user.name}!
-                    </span>
-                    <Button 
-                        className="shadow-sm bg-white border px-2 py-0 " 
-                        onClick={logout}>
-                        Logout <Logout></Logout>
-                    </Button>
-                </>
-            )}
-            {!isLoggedIn && (
-                <>
-                    Not logged in
-                    <Button 
-                        primary={true}
-                        className="shadow-sm px-2 py-0" 
-                        onClick={login}>
-                        Login <Login></Login>
-                    </Button>
-                </>
-            )}
-        </div>
     )
 }

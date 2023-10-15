@@ -1,6 +1,9 @@
+'use client'
 import FaqQuestion from "@/app/components/FaqQuestion";
+import {useWideHeader} from "@/app/hooks/AppContext";
 
 export default function HelpPage(){
+    useWideHeader();
     const email = 'support@feedbackboards.com';
     return (
         <div className="mt-16">

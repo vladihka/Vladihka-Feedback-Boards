@@ -1,6 +1,9 @@
+'use client'
 import Link from "next/link";
+import {useWideHeader} from "@/app/hooks/AppContext";
 
 export default function Home() {
+    useWideHeader();
     return (
         <section className="grid grid-cols-1 gap-24 text-center my-16">
             <div className="">
