@@ -2,7 +2,6 @@ import Link from "next/link";
 import {signIn, signOut, useSession} from "next-auth/react";
 import {useState} from "react";
 import Popup from "@/app/components/Popup";
-import {useBoardSlug} from "@/app/hooks/UseBoardInfo";
 import {useRouter} from "next/navigation";
 
 export default function DesktopNav(){
