@@ -34,16 +34,18 @@ export default function AccountView(){
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {boards.map(board => (
                     <Link
+                        key={board.name+board.key}
                         className="bg-white p-4 rounded-md shadow-sm h-24 flex items-center justify-center"
-                        href={/board/+board.name}>
+                        href={/board/+board.slug}>
                         <span>
                             {board.name}
                         </span>
                     </Link>
                 ))}
-                <button className="bg-indigo-300 rounded-md shadow-sm">
+                <Link href={'/account/new-board'}
+                      className="flex items-center justify-center bg-indigo-300 rounded-md shadow-sm">
                     <span>Add new board +</span>
-                </button>
+                </Link>
             </div>
         </>
     )

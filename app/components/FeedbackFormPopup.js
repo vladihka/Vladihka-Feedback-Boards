@@ -5,7 +5,7 @@ import axios from "axios";
 import Attachment from "./Attachment";
 import AttachFilesButton from "./AttachFilesButton";
 import { signIn, useSession } from "next-auth/react";
-import useBoardName from "../hooks/UseBoardName";
+import {useBoardSlug} from "@/app/hooks/UseBoardInfo";
 
 export default function FeedbackFormPopup({setShow, onCreate}){
 
@@ -13,7 +13,7 @@ export default function FeedbackFormPopup({setShow, onCreate}){
     const [description, setDescription] = useState('');
     const [uploads, setUploads] = useState([]);
     const {data: session} = useSession();
-    const boardName = useBoardName();
+    const boardName = useBoardSlug();
 
     async function handleCreatePostButtonClick(ev){
         ev.preventDefault();

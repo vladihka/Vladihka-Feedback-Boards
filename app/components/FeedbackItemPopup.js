@@ -11,7 +11,6 @@ import Edit from "./icons/Edit";
 import AttachFilesButton from "./AttachFilesButton";
 import Trash from "./icons/Trash";
 import {isBoardAdmin, useIsBoardAdmin} from "@/app/hooks/UseBoardInfo";
-import useBoardName from "@/app/hooks/UseBoardName";
 
 export default function FeedbackItemPopup({_id, title, description, status, setShow, votes, onVotesChange, 
     uploads, user, onUpdate}){
