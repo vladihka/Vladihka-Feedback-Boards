@@ -1,9 +1,20 @@
 'use client'
 import Link from "next/link";
 import {useWideHeader} from "@/app/hooks/AppContext";
+import {useEffect} from "react";
+import {signOut} from "next-auth/react";
+import {useRouter} from "next/navigation";
 
 export default function Home() {
     useWideHeader();
+    const router = useRouter();
+    useEffect(() => {
+        const isLogoutQuery = window.location.href.includes('/?logout');
+        if(isLogoutQuery){
+            router.push('/')
+            signOut({redirect: false});
+        }
+    }, []);
     return (
         <section className="grid grid-cols-1 gap-24 text-center my-16">
             <div className="">

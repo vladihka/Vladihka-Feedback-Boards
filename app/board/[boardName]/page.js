@@ -6,7 +6,7 @@ import {AppContext, useNarrowHeader} from "@/app/hooks/AppContext";
 import {useContext, useEffect} from "react";
 
 export default function BoardPage(){
-    
+
     const {setNarrowHeader} = useContext(AppContext);
 
     useEffect(() => {

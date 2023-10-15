@@ -1,7 +1,9 @@
+'use client'
 import Bars2 from "@/app/components/icons/Bars2";
 import Link from "next/link";
 import {useState} from "react";
 import {signIn, signOut, useSession} from "next-auth/react";
+import {loginAndRedirect, logoutAndRedirect} from "@/app/hooks/AppContext";
 import {useRouter} from "next/navigation";
 
 export default function MobileNav(){
@@ -10,13 +12,7 @@ export default function MobileNav(){
     const router = useRouter();
 
     function login(){
-        const isBoardPage = window.location.href.includes('/board/')
-        if(isBoardPage){
-            signIn('google');
-        }
-        else{
-            router.push('/account');
-        }
+        loginAndRedirect(router, signIn);
     }
 
     return(
@@ -26,7 +22,10 @@ export default function MobileNav(){
                 className="block md:hidden mobile-nav cursor-pointer">
                 <Bars2></Bars2>
             </label>
-            <input type="checkbox" id="navCb" checked={navOpen}/>
+            <input type="checkbox"
+                   id="navCb"
+                   checked={navOpen}
+                   onChange={() => {}}/>
             <div
                 onClick={() => setNavOpen(false)}
                 className="nav-popup fixed inset-0 pt-24 bg-opacity-80 bg-bgGray p-4
@@ -50,7 +49,7 @@ export default function MobileNav(){
                                     <Link className="block py-4 w-full uppercase"
                                           href={'/account'}>Account</Link>
                                     <button className="block py-4 w-full uppercase"
-                                            onClick={() => signOut()}>
+                                            onClick={() => logoutAndRedirect(router, signOut)}>
                                             Logout
                                     </button>
                                 </>

@@ -3,6 +3,7 @@ import {signIn, signOut, useSession} from "next-auth/react";
 import {useState} from "react";
 import Popup from "@/app/components/Popup";
 import {useRouter} from "next/navigation";
+import {loginAndRedirect, logoutAndRedirect} from "@/app/hooks/AppContext";
 
 export default function DesktopNav(){
 
@@ -15,13 +16,7 @@ export default function DesktopNav(){
         router.push('/account');
     }
     function login(){
-        const isBoardPage = window.location.href.includes('/board/')
-        if(isBoardPage){
-            signIn('google');
-        }
-        else{
-            router.push('/account');
-        }
+        loginAndRedirect(router, signIn);
     }
 
     return(
@@ -64,7 +59,11 @@ export default function DesktopNav(){
                         className="block w-full text-center py-4 uppercase">Your boards</button>
                     <button
                         className="block w-full text-center py-4 uppercase"
-                        onClick={() => signOut()}>Logout</button>
+                        onClick={() => {
+                            setShowUserPopup(false);
+                            logoutAndRedirect(router, signOut);
+                        }
+                    }>Logout</button>
                 </Popup>
             )}
         </>

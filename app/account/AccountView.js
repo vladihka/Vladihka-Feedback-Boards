@@ -7,9 +7,6 @@ export default function AccountView(){
     const {data:session, status} = useSession();
     const [boards, setBoards] = useState([]);
     useEffect(() => {
-        if(status === 'loading'){
-            return;
-        }
         if(status === 'unauthenticated'){
             signIn('google');
         }
@@ -21,11 +18,11 @@ export default function AccountView(){
     }, [status]);
 
     if(status === 'loading'){
-        return 'Loading...';
+        return <>'Loading...'</>;
     }
 
     if(status === "unauthenticated"){
-        return 'Unauthenticated. Redirecting...'
+        return <>'Unauthenticated. Redirecting...'</>;
     }
 
     return(
@@ -34,7 +31,7 @@ export default function AccountView(){
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {boards.map(board => (
                     <Link
-                        key={board.name+board.key}
+                        key={'board-tile-'+board.name}
                         className="bg-white p-4 rounded-md shadow-sm h-24 flex items-center justify-center"
                         href={/board/+board.slug}>
                         <span>

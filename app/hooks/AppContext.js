@@ -30,3 +30,23 @@ export function  useWideHeader(){
         setNarrowHeader(false);
     }, []);
 }
+
+export function loginAndRedirect(router, signIn){
+    const isBoardPage = window.location.href.includes('/board/')
+    if(isBoardPage){
+        signIn('google');
+    }
+    else{
+        router.push('/account');
+    }
+}
+
+export function logoutAndRedirect(router, signOut){
+    const isAccountPage = window.location.href.includes('/account')
+    if(isAccountPage) {
+        router.push('/?logout');
+    }
+    else {
+        signOut();
+    }
+}
