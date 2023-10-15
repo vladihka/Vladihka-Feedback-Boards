@@ -19,7 +19,7 @@ export async function GET(request){
     mongoose.connect(process.env.MONGO_URL);
     const url = new URL(request.url);
     if(url.searchParams.get('slug')){
-        const board = await Board.findOne({name:url.searchParams.get('slug')})
+        const board = await Board.findOne({slug:url.searchParams.get('slug')})
         return Response.json(board);
     }
     else {

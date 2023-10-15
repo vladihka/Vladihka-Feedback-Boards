@@ -12,9 +12,9 @@ export default function NewBoardPage(){
     const [description, setDescription] = useState('');
     const router = useRouter();
 
-    function handleFormSubmit(ev){
+    async function handleFormSubmit(ev){
         ev.preventDefault();
-        axios.post('/api/board', {name, slug, description});
+        await axios.post('/api/board', {name, slug, description});
         router.push('/board/'+slug);
     }
 
