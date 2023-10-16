@@ -18,6 +18,10 @@ async function getMyBoards(){
 export async function GET(request){
     mongoose.connect(process.env.MONGO_URL);
     const url = new URL(request.url);
+    if(url.searchParams.get('id')){
+        const board = await Board.findById(url.searchParams.get('id'))
+        return Response.json(board);
+    }
     if(url.searchParams.get('slug')){
         const board = await Board.findOne({slug:url.searchParams.get('slug')})
         return Response.json(board);
@@ -42,4 +46,21 @@ export async function POST(request){
         adminEmail: session.user.email,
     })
     return Response.json(boardDoc);
+}
+
+export async function PUT(request){
+    mongoose.connect(process.env.MONGO_URL);
+    const session = await getServerSession(authOptions);
+    if(!session){
+        return Response.json(false);
+    }
+    const jsonBody = await request.json();
+    const {id, name, slug, description} = jsonBody;
+    const board = await Board.findById(id);
+    if(session.user.email !== board.adminEmail){
+        return Response.json(false);
+    }
+    return Response.json(
+        await Board.findByIdAndUpdate(id, {name, slug, description})
+    );
 }
