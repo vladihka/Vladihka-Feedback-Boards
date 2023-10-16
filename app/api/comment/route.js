@@ -2,6 +2,9 @@ import { Comment } from "@/app/models/Comment";
 import mongoose from "mongoose";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
+import {Feedback} from "@/app/models/Feedback";
+import {Board} from "@/app/models/Board";
+import {comment} from "postcss";
 
 export async function POST(req){
     mongoose.connect(process.env.MONGO_URL);
@@ -9,6 +12,11 @@ export async function POST(req){
     const session = await getServerSession(authOptions);
     if(!session){
         return Response.json(false);
+    }
+    const feedback = await Feedback.findById(jsonBody.feedbackId);
+    const board = await Board.find({slug:feedback.boardName})
+    if(board.archived){
+        return new Response('Unauthorized', {status: 401});
     }
     const commentDoc = await Comment.create({
         text: jsonBody.text,
@@ -27,6 +35,12 @@ export async function PUT(req){
         return Response.json(false);
     }
     const {id, text, uploads} = jsonBody;
+    const comment = await Comment.findById(comment.feedbackId);
+    const feedback = await Feedback.findById(jsonBody.feedbackId);
+    const board = await Board.find({slug:feedback.boardName})
+    if(board.archived){
+        return new Response('Unauthorized', {status: 401});
+    }
     const updatedCoometDoc = await Comment.findOneAndUpdate(
         {userEmail:session.user.email, _id: id},
         {text, uploads},

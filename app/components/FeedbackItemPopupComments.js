@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import Button from "./Button";
 import Avatar from "./Avatar";
 import CommentForm from "./CommentForm";
@@ -7,6 +7,7 @@ import Attachment from "./Attachment";
 import TimeAgo from "timeago-react";
 import { useSession } from "next-auth/react";
 import AttachFilesButton from "./AttachFilesButton";
+import {BoardInfoContext} from "@/app/hooks/UseBoardInfo";
 
 export default function FeedbackItemPopupComments({feedbackId}){
     const [comments, setComments] = useState([]);
@@ -14,6 +15,7 @@ export default function FeedbackItemPopupComments({feedbackId}){
     const [editingComment, setEdititingComment] = useState(false);
     const [newCommentText, setNewCommentText] = useState('');
     const [newCommentUploads, setNewCommentUploads] = useState([]);
+    const {archived} = useContext(BoardInfoContext);
 
     useEffect(() => {
         fetchComments();
@@ -62,6 +64,8 @@ export default function FeedbackItemPopupComments({feedbackId}){
         setEdititingComment(null);
     }
 
+    const showCommentForm = !editingComment && !archived
+
     return (
         <div className="p-8">
             {comments?.length > 0 && comments.map(comment => {
@@ -87,7 +91,7 @@ export default function FeedbackItemPopupComments({feedbackId}){
                                         datetime={comment.createdAt}
                                         locale='en_US'>
                                     </TimeAgo>
-                                    {!editingThis && isAuthor && (
+                                    {!editingThis && !archived && isAuthor && (
                                         <>
                                             &nbsp;&middot;&nbsp;
                                             <span 
@@ -136,7 +140,12 @@ export default function FeedbackItemPopupComments({feedbackId}){
                     </div>
                 )
             })}
-            {!editingComment && (
+            {comments?.length === 0 && !showCommentForm && (
+                <div className={"text-center text-opacity-50 text-black py-4"}>
+                    No comments on this post
+                </div>
+            )}
+            {showCommentForm && (
                 <CommentForm feedbackId={feedbackId} onPost={fetchComments}></CommentForm>
             )}
         </div>

@@ -32,6 +32,9 @@ export async function POST(request){
 
     const feedback = await Feedback.findById(feedbackId);
     const board = await Board.findOne({slug:feedback.boardName});
+    if(board.archived){
+        return new Response('Unauthorized', {status: 401});
+    }
     if(!canWeAccessThisBoard(userEmail,board)){
         return new Response('Unauthorized', {status: 401});
     }

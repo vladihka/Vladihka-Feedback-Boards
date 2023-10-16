@@ -62,12 +62,16 @@ export async function PUT(request){
         return Response.json(false);
     }
     const jsonBody = await request.json();
-    const {id, name, slug, description, visibility, allowedEmails} = jsonBody;
+    const {
+        id, name, slug, description, visibility, allowedEmails, archived,
+    } = jsonBody;
     const board = await Board.findById(id);
     if(session.user.email !== board.adminEmail){
         return Response.json(false);
     }
     return Response.json(
-        await Board.findByIdAndUpdate(id, {name, slug, description, visibility, allowedEmails})
+        await Board.findByIdAndUpdate(id, {
+            name, slug, description, visibility, allowedEmails, archived,
+        })
     );
 }

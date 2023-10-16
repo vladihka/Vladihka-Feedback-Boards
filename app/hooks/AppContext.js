@@ -13,7 +13,7 @@ export function AppContextProvider({children}){
     )
 }
 
-export function  useNarrowHeader(){
+export function useNarrowHeader(){
 
     const {setNarrowHeader} = useContext(AppContext);
 

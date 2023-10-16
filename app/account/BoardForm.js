@@ -1,34 +1,56 @@
 import Button from "@/app/components/Button";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
-import {all} from "axios";
+import axios, {all} from "axios";
 
 export default function BoardForm({name:defaultName,slug:defaultSlug,
                                       description:defaultDescription,buttonText='',
                                   onSubmit, visibility:defaultVisibility='public',
-                                  allowedEmails:defaultAllowedEmails=''}){
+                                  allowedEmails:defaultAllowedEmails='',
+                                  _id, archived:defaultArchived=false}){
 
     const [name, setName] = useState(defaultName || '');
     const [slug, setSlug] = useState(defaultSlug || '');
     const [description, setDescription] = useState(defaultDescription || '');
     const router = useRouter();
     const [visibility, setVisibility] = useState(defaultVisibility || 'public');
-    const [allowedEmails, setAllowedEmails] = useState(defaultAllowedEmails.join("\n") || '')
+    const [allowedEmails, setAllowedEmails] = useState(defaultAllowedEmails.join("\n") || '');
+    const [archived, setArchived] = useState(defaultArchived || false)
 
-    async function handleFormSubmit(ev){
-        ev.preventDefault();
-        onSubmit({
+    function getBoardData(){
+        return {
             name,
             slug,
             description,
             visibility,
             allowedEmails:allowedEmails.split("\n"),
-        });
+        }
+    }
+
+    async function handleFormSubmit(ev){
+        ev.preventDefault();
+        onSubmit(getBoardData);
+    }
+
+    function handleArchiveButtonClick(ev){
+        ev.preventDefault();
+        axios.put('/api/board', {
+            id:_id,
+            archived: !archived,
+            ...getBoardData(),
+        }).then(() => {
+            setArchived(prev => !prev);
+        })
     }
 
     return(
         <>
             <form className="max-w-md mx-auto" onSubmit={handleFormSubmit}>
+                {archived && (
+                    <div className="border border-orange-400 bg-orange-200 rounded-md p-4 my-4">
+                        This board is archived
+                    </div>
+                )}
                 <label>
                     <div>Board name:</div>
                 </label>
@@ -93,9 +115,16 @@ export default function BoardForm({name:defaultName,slug:defaultSlug,
                 )}
                 <Button primary
                         disabled={name === '' || slug === ''}
-                        className="bg-primary px-6 py-2 w-full justify-center">
+                        className="bg-primary px-6 py-2 w-full justify-center my-4">
                     {buttonText}
                 </Button>
+                {!!_id && (
+                   <Button
+                       onClick={handleArchiveButtonClick}
+                       className="w-full border-gray-400 border justify-center py-2 my-4">
+                       {archived ? 'Unarchive' : 'Archive'} this board
+                   </Button>
+                )}
             </form>
         </>
     )

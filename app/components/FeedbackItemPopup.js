@@ -2,7 +2,7 @@ import axios from "axios";
 import Button from "./Button";
 import FeedbackItemPopupComments from "./FeedbackItemPopupComments";
 import Popup from "./Popup";
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import { MoonLoader } from "react-spinners";
 import { useSession } from "next-auth/react";
 import Tick from "./icons/Tick";
@@ -10,7 +10,7 @@ import Attachment from "./Attachment";
 import Edit from "./icons/Edit";
 import AttachFilesButton from "./AttachFilesButton";
 import Trash from "./icons/Trash";
-import {isBoardAdmin, useBoardSlug} from "@/app/hooks/UseBoardInfo";
+import {BoardInfoContext, isBoardAdmin, useBoardSlug} from "@/app/hooks/UseBoardInfo";
 
 export default function FeedbackItemPopup({_id, title, description, status, setShow, votes, onVotesChange, 
     uploads, user, onUpdate}){
@@ -24,6 +24,7 @@ export default function FeedbackItemPopup({_id, title, description, status, setS
     const [newStatus, setNewStatus] = useState(status || 'new');
     const boardSlug = useBoardSlug();
     const [isAdmin, setIsAdmin] = useState(undefined);
+    const {archived} = useContext(BoardInfoContext);
 
     useEffect(() => {
         if(boardSlug){
@@ -149,7 +150,7 @@ export default function FeedbackItemPopup({_id, title, description, status, setS
                         </Button>
                     </>
                 )}
-                {!isEditMode && user?.email && session?.user?.email === user?.email && (
+                {!isEditMode && !archived && user?.email && session?.user?.email === user?.email && (
                     <Button onClick={handleEditButtonClick}>
                         <Edit className="w-4 h-4"></Edit>
                         Edit
@@ -167,7 +168,7 @@ export default function FeedbackItemPopup({_id, title, description, status, setS
                         <option value="archived">archived</option>
                     </select>
                 )}
-                {!isEditMode && (
+                {!isEditMode && !archived && (
                     <Button primary={1} onClick={handleVoteButtonClick}>
                         {isVotesLoading && (
                             <MoonLoader size={18}></MoonLoader>

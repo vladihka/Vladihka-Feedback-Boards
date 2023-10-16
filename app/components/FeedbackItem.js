@@ -1,17 +1,19 @@
 'use client';
-import { useState } from "react";
+import {useContext, useState} from "react";
 import Popup from "./Popup";
 import Button from "./Button";
 import { signIn, useSession } from "next-auth/react";
 import axios from "axios";
 import { MoonLoader } from "react-spinners";
+import {BoardInfoContext} from "@/app/hooks/UseBoardInfo";
 
 export default function FeedbackItem({onOpen, _id, status, title, description, votes, 
   onVotesChange, parentLoadingVotes = true}){
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const {data:session} = useSession();
   const [isVotesLoading, setIsVotesLoading] = useState(false);
-  const isLoggedIn = !!session?.user?.email;
+  const isLoggedIn = !!session?.user?.email
+  const {archived} = useContext(BoardInfoContext);
 
   function handleVoteButtonClick(ev){
     ev.stopPropagation();
@@ -73,20 +75,22 @@ export default function FeedbackItem({onOpen, _id, status, title, description, v
                 </div>
               </Popup>
             )}
-            <Button
-                primary={iVoted ? 1 : undefined}
-                onClick={handleVoteButtonClick} 
-                className="shadow-sm border">
-              {!isVotesLoading && (
-                <>
-                  <span className="triangle-vote-up"></span>
-                  {votes?.length || '0'}
-                </>
-              )}
-              {isVotesLoading && (
-                <MoonLoader size={18}></MoonLoader>
-              )}
-            </Button>
+            {!archived && (
+                <Button
+                    primary={iVoted ? 1 : undefined}
+                    onClick={handleVoteButtonClick}
+                    className="shadow-sm border">
+                  {!isVotesLoading && (
+                      <>
+                        <span className="triangle-vote-up"></span>
+                        {votes?.length || '0'}
+                      </>
+                  )}
+                  {isVotesLoading && (
+                      <MoonLoader size={18}></MoonLoader>
+                  )}
+                </Button>
+            )}
           </div>
         </a>
     )
