@@ -8,9 +8,9 @@ export default function NewBoardPage(){
 
     const router = useRouter();
 
-    async  function handleFormSubmit({name, slug, description}){
-        await axios.post('/api/board', {name, slug, description});
-        router.push('/board/'+slug);
+    async  function handleFormSubmit(boardData){
+        await axios.post('/api/board', boardData);
+        router.push('/board/'+boardData.slug);
     }
 
     return(

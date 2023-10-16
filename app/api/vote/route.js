@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { Vote } from "@/app/models/Vote";
 import { Feedback } from "@/app/models/Feedback";
+import {canWeAccessThisBoard} from "@/app/libs/boardApiFunctions";
+import {Board} from "@/app/models/Board";
 
 export async function GET(request){
     const url = new URL(request.url);
@@ -27,6 +29,12 @@ export async function POST(request){
     const {feedbackId} = jsonBody;
     const session = await getServerSession(authOptions);
     const {email:userEmail} = session.user;
+
+    const feedback = await Feedback.findById(feedbackId);
+    const board = await Board.findOne({slug:feedback.boardName});
+    if(!canWeAccessThisBoard(userEmail,board)){
+        return new Response('Unauthorized', {status: 401});
+    }
 
     const existingVote = await Vote.findOne({feedbackId, userEmail});
     if(existingVote){

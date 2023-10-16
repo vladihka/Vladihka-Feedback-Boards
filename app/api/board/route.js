@@ -2,6 +2,7 @@ import {getServerSession} from "next-auth";
 import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 import mongoose from "mongoose";
 import {Board} from "@/app/models/Board";
+import {canWeAccessThisBoard} from "@/app/libs/boardApiFunctions";
 
 async function getMyBoards(){
     const session = await getServerSession(authOptions);
@@ -23,7 +24,11 @@ export async function GET(request){
         return Response.json(board);
     }
     if(url.searchParams.get('slug')){
-        const board = await Board.findOne({slug:url.searchParams.get('slug')})
+        const board = await Board.findOne({slug:url.searchParams.get('slug')});
+        const session = await getServerSession(authOptions);
+        if(!canWeAccessThisBoard(session?.user?.email, board)){
+            return new Response('Unauthorized', {status: 401});
+        }
         return Response.json(board);
     }
     else {
@@ -38,11 +43,13 @@ export async function POST(request){
         return Response.json(false);
     }
     const jsonBody = await  request.json();
-    const {name, slug, description} = jsonBody;
+    const {name, slug, description, visibility, allowedEmails} = jsonBody;
     const boardDoc = await Board.create({
         name,
         slug,
         description,
+        visibility,
+        allowedEmails,
         adminEmail: session.user.email,
     })
     return Response.json(boardDoc);
@@ -55,12 +62,12 @@ export async function PUT(request){
         return Response.json(false);
     }
     const jsonBody = await request.json();
-    const {id, name, slug, description} = jsonBody;
+    const {id, name, slug, description, visibility, allowedEmails} = jsonBody;
     const board = await Board.findById(id);
     if(session.user.email !== board.adminEmail){
         return Response.json(false);
     }
     return Response.json(
-        await Board.findByIdAndUpdate(id, {name, slug, description})
+        await Board.findByIdAndUpdate(id, {name, slug, description, visibility, allowedEmails})
     );
 }

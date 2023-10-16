@@ -18,8 +18,10 @@ export default function EditBoardPage(){
         }
     }, [id]);
 
-    async function handleBoardSubmit({name, slug, description}){
-        await axios.put('/api/board', {id:board._id, name, slug, description});
+    async function handleBoardSubmit(boardData){
+        await axios.put('/api/board', {
+            id:board._id, ...boardData,
+        });
         router.push('/account');
     }
 

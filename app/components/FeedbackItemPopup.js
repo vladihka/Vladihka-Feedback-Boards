@@ -10,7 +10,7 @@ import Attachment from "./Attachment";
 import Edit from "./icons/Edit";
 import AttachFilesButton from "./AttachFilesButton";
 import Trash from "./icons/Trash";
-import {isBoardAdmin, useIsBoardAdmin} from "@/app/hooks/UseBoardInfo";
+import {isBoardAdmin, useBoardSlug} from "@/app/hooks/UseBoardInfo";
 
 export default function FeedbackItemPopup({_id, title, description, status, setShow, votes, onVotesChange, 
     uploads, user, onUpdate}){
@@ -22,16 +22,16 @@ export default function FeedbackItemPopup({_id, title, description, status, setS
     const [newUploads, setNewUploads] = useState(uploads);
     //const isAdmin = session?.user?.email === 'vladihka58@gmail.com';
     const [newStatus, setNewStatus] = useState(status || 'new');
-    const boardName = useBoardName();
+    const boardSlug = useBoardSlug();
     const [isAdmin, setIsAdmin] = useState(undefined);
 
     useEffect(() => {
-        if(boardName){
-            isBoardAdmin(boardName).then(resultIsAdmin => {
+        if(boardSlug){
+            isBoardAdmin(boardSlug).then(resultIsAdmin => {
                 setIsAdmin(resultIsAdmin);
             })
         }
-    }, [boardName]);
+    }, [boardSlug]);
     
     useEffect(() => {
         if(newStatus === status){

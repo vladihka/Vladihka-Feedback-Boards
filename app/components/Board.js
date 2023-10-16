@@ -83,7 +83,7 @@ export default function Board({name}){
         postLoginActions(fetchVotes, fetchFeedbacks, openFeedbackPopupItem);
     }, [session]);
 
-    async function fetchFeedbacks(append=false){
+    async function fetchFeedbacks(append= false){
         if(fetchingFeedbacksRef.current || everythingLoadedRef.current){
             return;
         }
@@ -131,6 +131,14 @@ export default function Board({name}){
       await fetchFeedbacks();
     }
 
+    async function reFetchFeedbacks(){
+        loadedRows.current = 0;
+        sortOrFilterRef.current = sortOrFilter;
+        searchPhraseRef.current = searchPhrase;
+        everythingLoadedRef.current = false;
+        await fetchFeedbacks();
+    }
+
     return (
         <main className="bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-4 md:mb-8 overflow-hidden">
             <FeedbacksFetchContext.Provider value={{
@@ -138,7 +146,7 @@ export default function Board({name}){
                 searchPhrase,
                 setSortOrFilter,
                 setSearchPhrase,}}> 
-                <BoardHeader onNewFeedback={fetchFeedbacks}></BoardHeader>
+                <BoardHeader onNewFeedback={reFetchFeedbacks}></BoardHeader>
             </FeedbacksFetchContext.Provider>
               <div className="px-8">
                   <BoardBody
