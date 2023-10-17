@@ -1,8 +1,11 @@
 import axios from "axios";
 
 export function feedbackOpenNeeded(feedbacksFetchCount, pathname){
-    if(feedbacksFetchCount === 1 && /^\/feedback\/[a-z0-9]+/.test(pathname)){
-        return pathname.replace('/feedback/', '');
+
+    const regexResult = /\/feedback\/(?<id>[a-z0-9]+)/.exec(pathname);
+
+    if(feedbacksFetchCount === 1 && regexResult?.groups?.id){
+        return regexResult?.groups?.id;
     }
     else{
         return false;

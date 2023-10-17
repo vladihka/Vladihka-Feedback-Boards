@@ -4,6 +4,7 @@ import {useContext, useState} from "react";
 import Popup from "@/app/components/Popup";
 import {useRouter} from "next/navigation";
 import {AppContext, loginAndRedirect, logoutAndRedirect} from "@/app/hooks/AppContext";
+import NotificationsButton from "@/app/components/NotificationsButton";
 
 export default function DesktopNav(){
 
@@ -61,6 +62,7 @@ export default function DesktopNav(){
                                 {session.user.name.split(' ')[0]}
                             </span>
                         </button>
+                        <NotificationsButton></NotificationsButton>
                     </>
                 )}
                 {sessionStatus === 'unauthenticated' && (

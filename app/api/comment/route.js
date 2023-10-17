@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import {Feedback} from "@/app/models/Feedback";
 import {Board} from "@/app/models/Board";
-import {comment} from "postcss";
+import {Notification} from "@/app/models/Notification";
 
 export async function POST(req){
     mongoose.connect(process.env.MONGO_URL);
@@ -24,6 +24,12 @@ export async function POST(req){
         userEmail: session.user.email,
         feedbackId: jsonBody.feedbackId,
     });
+    await Notification.create({
+        type:'comment',
+        sourceUserName: session?.user?.name,
+        destinationUserEmail: feedback.userEmail,
+        feedbackId: feedback._id,
+    })
     return Response.json(commentDoc);
 }
 
