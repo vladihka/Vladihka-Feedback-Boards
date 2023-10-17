@@ -26,6 +26,6 @@ export async function PUT(request){
         return new Response('Unauthorized', {status: 401})
     }
     const {id} = await request.json();
-    Notification.findByIdAndUpdate(id, {read:true});
+    await Notification.findByIdAndUpdate(id, {read:true});
     return Response.json(true);
 }
