@@ -5,9 +5,13 @@ export const AppContext = createContext({})
 
 export function AppContextProvider({children}){
     const [narrowHeader, setNarrowHeader] = useState(false);
+    const [style, setStyle] = useState('oceanic');
 
     return (
-        <AppContext.Provider value={{narrowHeader, setNarrowHeader}}>
+        <AppContext.Provider value={{
+            narrowHeader, setNarrowHeader,
+            style, setStyle,
+        }}>
             {children}
         </AppContext.Provider>
     )

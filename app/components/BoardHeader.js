@@ -4,13 +4,19 @@ import Search from "./icons/Search";
 import { FeedbacksFetchContext } from "../hooks/FeedbackFetchContext";
 import FeedbackFormPopup from "./FeedbackFormPopup";
 import {BoardInfoContext, useBoardSlug} from "@/app/hooks/UseBoardInfo";
+import BoardHeaderGradient from "@/app/components/BoardHeaderGradient";
 
 export default function BoardHeader({onNewFeedback}){
 
     const [showFeedbackPopupForm, setShowFeedbackPopupForm] = useState(false);
     const {sortOrFilter, searchPhrase, setSortOrFilter, setSearchPhrase} = useContext(FeedbacksFetchContext);
     const slug = useBoardSlug();
-    const {name:boardName, description, archived} = useContext(BoardInfoContext);
+    const {
+        name:boardName,
+        description,
+        archived,
+        style,
+    } = useContext(BoardInfoContext);
 
     function openFeedbackPopupForm(){
         setShowFeedbackPopupForm(true);
@@ -23,10 +29,10 @@ export default function BoardHeader({onNewFeedback}){
                     onCreate={onNewFeedback}
                     setShow={setShowFeedbackPopupForm}></FeedbackFormPopup>
                 )}
-            <div className="bg-gradient-to-r from-cyan-400 to-blue-400 p-8">
-                <h1 className="font-bold text-xl">{boardName}</h1>
-                <p className="text-opacity-90 text-slate-700">{description}</p>
-            </div>
+            <BoardHeaderGradient
+                style={style}
+                name={boardName}
+                description={description}></BoardHeaderGradient>
             <div className="bg-gray-100 px-8 py-4 flex border-b items-center">
                 <div className="grow flex items-center gap-4 text-gray-400">
                     <select 

@@ -8,6 +8,7 @@ const boardSchema = new Schema({
     visibility: {type: String, default: 'public', enum: ['public', 'invite-only']},
     allowedEmails: {type: [String], default: []},
     archived: {type: Boolean, default: false},
+    style: {type: String, default: 'hyper'},
 })
 
 export const Board = models?.Board || model('Board', boardSchema);

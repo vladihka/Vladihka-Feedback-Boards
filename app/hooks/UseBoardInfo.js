@@ -25,6 +25,7 @@ export function BoardInfoProvider({children}){
     const [boardAdmin, setBoardAdmin] = useState(undefined);
     const [boardDescription, setBoardDescription] = useState('');
     const [archived, setArchived] = useState(false);
+    const [style, setStyle] = useState('hyper');
 
     useEffect(() => {
     if(boardSlug){
@@ -33,6 +34,7 @@ export function BoardInfoProvider({children}){
             setBoardAdmin(res.data.adminEmail);
             setBoardDescription(res.data.description);
             setArchived(res.data.archived);
+            setStyle(res.data.style);
             setLoaded(true);
         }).catch(err => {
             if(err.response.status === 401){
@@ -65,6 +67,7 @@ export function BoardInfoProvider({children}){
             name:boardName,
             description: boardDescription,
             archived,
+            style,
         }}>
             {archived && (
                 <div className="bg-orange-200 p-4 max-w-2xl mx-auto rounded-md">

@@ -1,15 +1,16 @@
 import Link from "next/link";
 import {signIn, signOut, useSession} from "next-auth/react";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import Popup from "@/app/components/Popup";
 import {useRouter} from "next/navigation";
-import {loginAndRedirect, logoutAndRedirect} from "@/app/hooks/AppContext";
+import {AppContext, loginAndRedirect, logoutAndRedirect} from "@/app/hooks/AppContext";
 
 export default function DesktopNav(){
 
     const {data:session, status:sessionStatus} = useSession();
     const [showUserPopup, setShowUserPopup] = useState(false);
     const router = useRouter();
+    const {style} = useContext(AppContext);
 
     function goAndClose(uri){
         setShowUserPopup(false);
@@ -21,7 +22,27 @@ export default function DesktopNav(){
 
     return(
         <>
-            <Link href="/" className="text-primary font-bold text-xl relative z-30">FeedbackBoard</Link>
+            <Link
+                href="/"
+                className={"font-bold text-xl relative z-30 "
+                + (
+                    style === 'hyper'
+                        ? 'text-red-500'
+                        : style === 'oceanic'
+                            ? 'text-blue-500'
+                            : style === 'cotton-candy'
+                                ? 'text-pink-300'
+                                : style === 'gotham'
+                                    ? 'text-gradient-to-r from-gray-700 via-gray-900 to-black'
+                                    : style === 'sunset'
+                                        ? 'text-red-200'
+                                        : style === 'mojave'
+                                            ? 'text-yellow-300'
+                                            : 'text-blue-500'
+                    )
+            }>
+                FeedbackBoard:
+            </Link>
             <nav className="gap-4 grow hidden md:flex">
                 <Link href={'/'}>Home</Link>
                 <Link href={'/pricing'}>Pricing</Link>

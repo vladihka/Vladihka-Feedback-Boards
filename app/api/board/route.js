@@ -43,12 +43,13 @@ export async function POST(request){
         return Response.json(false);
     }
     const jsonBody = await  request.json();
-    const {name, slug, description, visibility, allowedEmails} = jsonBody;
+    const {name, slug, description, visibility, allowedEmails, style} = jsonBody;
     const boardDoc = await Board.create({
         name,
         slug,
         description,
         visibility,
+        style,
         allowedEmails,
         adminEmail: session.user.email,
     })
@@ -63,7 +64,7 @@ export async function PUT(request){
     }
     const jsonBody = await request.json();
     const {
-        id, name, slug, description, visibility, allowedEmails, archived,
+        id, name, slug, description, visibility, allowedEmails, archived, style,
     } = jsonBody;
     const board = await Board.findById(id);
     if(session.user.email !== board.adminEmail){
@@ -71,7 +72,7 @@ export async function PUT(request){
     }
     return Response.json(
         await Board.findByIdAndUpdate(id, {
-            name, slug, description, visibility, allowedEmails, archived,
+            name, slug, description, visibility, allowedEmails, archived, style,
         })
     );
 }
