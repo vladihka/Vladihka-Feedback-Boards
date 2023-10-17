@@ -41,7 +41,7 @@ export default function DesktopNav(){
                                             : 'text-blue-500'
                     )
             }>
-                FeedbackBoard:
+                FeedbackBoard
             </Link>
             <nav className="gap-4 grow hidden md:flex">
                 <Link href={'/'}>Home</Link>

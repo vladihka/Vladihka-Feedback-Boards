@@ -30,9 +30,9 @@ export default function BoardHeader({onNewFeedback}){
                     setShow={setShowFeedbackPopupForm}></FeedbackFormPopup>
                 )}
             <BoardHeaderGradient
-                style={style}
                 name={boardName}
-                description={description}></BoardHeaderGradient>
+                description={description}
+                style={style}></BoardHeaderGradient>
             <div className="bg-gray-100 px-8 py-4 flex border-b items-center">
                 <div className="grow flex items-center gap-4 text-gray-400">
                     <select 
