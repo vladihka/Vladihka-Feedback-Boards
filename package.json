@@ -20,6 +20,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-spinners": "^0.13.8",
+    "stripe": "^14.1.0",
     "timeago-react": "^3.0.6"
   },
   "devDependencies": {

@@ -15,7 +15,7 @@ export default function BoardForm({
                                       buttonText='',
                                       onSubmit,
                                       visibility:defaultVisibility='public',
-                                      allowedEmails:defaultAllowedEmails='',
+                                      allowedEmails:defaultAllowedEmails=[],
                                       _id,
                                       archived:defaultArchived=false,
                                       style:defaultStyle='hyper',

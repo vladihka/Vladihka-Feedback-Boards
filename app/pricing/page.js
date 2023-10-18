@@ -1,8 +1,17 @@
 'use client'
 import {useWideHeader} from "@/app/hooks/AppContext";
+import Button from "@/app/components/Button";
+import axios from "axios";
 
 export default function Pricing(){
     useWideHeader();
+
+    function handleUpgradeButtonClick(){
+        axios.post('/api/subscription').then(res => {
+            window.location.href = res.data;
+        })
+    }
+
     return(
         <section className="my-16">
             <h1 className="text-center text-4xl mb-8">Simple pricing</h1>
@@ -51,6 +60,12 @@ export default function Pricing(){
                         <li className="tick-circle primary">Password protected boards</li>
                         <li className="tick-circle primary">Faster support</li>
                     </ul>
+                    <div>
+                        <Button
+                            onClick={handleUpgradeButtonClick}
+                            className="bg-primary text-white w-full
+                            justify-center mt-2 py-2">Upgrade</Button>
+                    </div>
                 </div>
             </div>
         </section>
