@@ -40,6 +40,7 @@ export default function MobileNav(){
                             <Link className="block py-4" href={'/'}>Home</Link>
                             <Link className="block py-4" href={'/pricing'}>Pricing</Link>
                             <Link className="block py-4" href={'/help'}>Help</Link>
+                            <Link className="block py-4" href={'/subscription'}>Subscription</Link>
                             {sessionStatus === 'unauthenticated' && (
                                 <>
                                     <button className="block py-4 w-full uppercase"

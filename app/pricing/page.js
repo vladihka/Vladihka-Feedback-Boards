@@ -2,18 +2,38 @@
 import {useWideHeader} from "@/app/hooks/AppContext";
 import Button from "@/app/components/Button";
 import axios from "axios";
+import {useEffect, useState} from "react";
 
 export default function Pricing(){
     useWideHeader();
 
-    function handleUpgradeButtonClick(){
+    const [isPremium, setIsPremium] = useState(null);
+
+    useEffect(() => {
+        axios.get('/api/subscription').then(res => {
+            setIsPremium(res.data?.stripeSubscriptionData?.object?.status === 'active');
+        }).catch(err => {
+            if(err.response.status === 401){
+
+            }
+        })
+    }, []);
+
+    function handleUpgradeButtonClick() {
         axios.post('/api/subscription').then(res => {
+            window.location.href = res.data;
+        });
+    }
+
+    function handleManageButtonClick(){
+        axios.post('/api/portal').then(res => {
             window.location.href = res.data;
         })
     }
 
     return(
         <section className="my-16">
+            {isPremium ? 1 : 0}
             <h1 className="text-center text-4xl mb-8">Simple pricing</h1>
             <p className="text-center mb-4">Start for free, upgrade if you need</p>
             <div className="md:flex grid-cols-1 w-full justify-center md:gap-8 gap-2">
@@ -61,10 +81,18 @@ export default function Pricing(){
                         <li className="tick-circle primary">Faster support</li>
                     </ul>
                     <div>
-                        <Button
-                            onClick={handleUpgradeButtonClick}
-                            className="bg-primary text-white w-full
+                        {isPremium === false && (
+                            <Button
+                                onClick={handleUpgradeButtonClick}
+                                className="bg-primary text-white w-full
                             justify-center mt-2 py-2">Upgrade</Button>
+                        )}
+                        {isPremium === true && (
+                            <Button
+                                onClick={handleManageButtonClick}
+                                className="border border-black border-opacity-20 text-black text-opacity-70 w-full
+                            justify-center mt-2 py-2">Manage your subscription</Button>
+                        )}
                     </div>
                 </div>
             </div>

@@ -15,7 +15,7 @@ export default function DesktopNav(){
 
     function goAndClose(uri){
         setShowUserPopup(false);
-        router.push('/account');
+        router.push(uri);
     }
     function login(){
         loginAndRedirect(router, signIn);
@@ -79,14 +79,23 @@ export default function DesktopNav(){
                 <Popup narrow={1} setShow={setShowUserPopup}>
                     <button
                         onClick={() => goAndClose('/account')}
-                        className="block w-full text-center py-4 uppercase">Your boards</button>
+                        className="block w-full text-center py-4 uppercase">
+                        Your boards
+                    </button>
+                    <button
+                        onClick={() => goAndClose('/subscription')}
+                        className="block w-full text-center py-4 uppercase">
+                        Subscription
+                    </button>
                     <button
                         className="block w-full text-center py-4 uppercase"
                         onClick={() => {
                             setShowUserPopup(false);
                             logoutAndRedirect(router, signOut);
                         }
-                    }>Logout</button>
+                    }>
+                        Logout
+                    </button>
                 </Popup>
             )}
         </>
