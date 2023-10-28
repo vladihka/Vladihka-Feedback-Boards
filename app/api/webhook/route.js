@@ -30,6 +30,7 @@ export async function POST(req) {
     if (eventType === 'checkout.session.completed') {
         const {userEmail} = data.object.metadata;
         const {customer} = data.object;
+        console.log({eventType, data})
         const sub = await Subscription.findOne({userEmail});
         if (sub) {
             sub.customer = customer;
@@ -39,12 +40,13 @@ export async function POST(req) {
         }
     }
     if (eventType === 'customer.subscription.updated') {
-        const {customer} = data.object;
+        const {customer} = data.object
+        console.log({eventType, data})
         const sub = await Subscription.findOne({customer});
         sub.stripeSubscriptionData = data;
         await sub.save();
     }
 
-    console.log({eventType});
+    //console.log({eventType});
     return new Response(null, {status:200});
 }
