@@ -28,10 +28,10 @@ export default function SubscriptionPage(){
         humanReadableEndTime = endTime?.toISOString().replace('T', ' ').substring(0,16);
     }
 
-    function handleGoProButtonClick(){
-        axios.get('/api/subscription').then(res => {
+    function manageSubscriptionButtonClick() {
+        axios.post('/api/portal').then(res => {
             window.location.href = res.data;
-        })
+        });
     }
 
     function manageSubscriptionClick(){
@@ -54,7 +54,7 @@ export default function SubscriptionPage(){
                         <Button
                             className="my-4"
                             primary={1}
-                            onClick={handleGoProButtonClick}>Go PRO!</Button>
+                            onClick={manageSubscriptionButtonClick}>Go PRO!</Button>
                     </div>
                 </div>
             )}

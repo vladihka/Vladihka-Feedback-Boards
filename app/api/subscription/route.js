@@ -15,7 +15,7 @@ export async function GET() {
 }
 
 export async function POST(req) {
-    const priceId = 'price_1O5racHIWsMOn2FmMoqmoeat';
+    const priceId = 'price_1Q5ntKHIWsMOn2FmlXT9Wxlr'; ///// price_1O5racHIWsMOn2FmMoqmoeat
     const userSession = await getServerSession(authOptions);
     if (!userSession) {
         return new Response('Unauthorized', {status:401});

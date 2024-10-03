@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {signIn, signOut, useSession} from "next-auth/react";
-import {useContext, useState} from "react";
+import React, {useContext, useState} from "react";
 import Popup from "@/app/components/Popup";
 import {useRouter} from "next/navigation";
 import {AppContext, loginAndRedirect, logoutAndRedirect} from "@/app/hooks/AppContext";
@@ -46,6 +46,7 @@ export default function DesktopNav(){
             </Link>
             <nav className="gap-4 grow hidden md:flex">
                 <Link href={'/'}>Home</Link>
+                <Link href={'/boards'}>All boards</Link>
                 <Link href={'/pricing'}>Pricing</Link>
                 <Link href={'/help'}>Help</Link>
             </nav>
