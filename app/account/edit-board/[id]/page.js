@@ -29,7 +29,7 @@ export default function EditBoardPage(){
         <>
             <h1 className="text-center text-4xl mb-8">Edit board</h1>
             {board && (
-                <BoardForm {...board} buttonText={'Update Board'} onSubmit={handleBoardSubmit}></BoardForm>
+                <BoardForm {...board} buttonText={"Update Board"} onSubmit={handleBoardSubmit}></BoardForm>
             )}
         </>
     )

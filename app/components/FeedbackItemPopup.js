@@ -20,7 +20,6 @@ export default function FeedbackItemPopup({_id, title, description, status, setS
     const [newTitle, setNewTitle] = useState(title);
     const [newDescriptiopn, setNewDescriptiopn] = useState(description);
     const [newUploads, setNewUploads] = useState(uploads);
-    //const isAdmin = session?.user?.email === 'vladihka58@gmail.com';
     const [newStatus, setNewStatus] = useState(status || 'new');
     const boardSlug = useBoardSlug();
     const [isAdmin, setIsAdmin] = useState(undefined);

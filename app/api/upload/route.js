@@ -2,7 +2,7 @@ import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 export async function POST(req){
 
-    const myS3cliend = new S3Client({
+    const myS3client = new S3Client({
         region: 'us-east-1',
         credentials: {
             accessKeyId: process.env.S3_ACCESS_KEY,
@@ -20,7 +20,7 @@ export async function POST(req){
             chunks.push(chunk);
         }
         const buffer = Buffer.concat(chunks);
-        await myS3cliend.send(new PutObjectCommand({
+        await myS3client.send(new PutObjectCommand({
             Bucket: 'vladihka-feedback-boards-uploads',
             Key: name,
             ACL: 'public-read',

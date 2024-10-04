@@ -26,7 +26,7 @@ export default function Home() {
                     className="bg-primary text-white px-6 py-4 rounded-md">Try for free &rarr;</Link>
             </div>
             <div className="relative">
-                <img src="board.png" alt="" className="relative z-10 max-w-full md:max-w-lg md:max-w-lg mx-auto"/>
+                <img src="board.png" alt="" className="relative z-10 max-w-full md:max-w-lg mx-auto"/>
                 <div className="bg-indigo-400 bg-opacity-20 w-[320px] h-[320px] rounded-full
                     absolute left-[50%] -ml-[160px] top-[50%] -mt-[160px]"></div>
             </div>

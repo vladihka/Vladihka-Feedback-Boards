@@ -8,11 +8,25 @@ async function getMyBoards(){
     const session = await getServerSession(authOptions);
     if(session?.user){
         return Response.json(
-            await Board.find({adminEmail:session.user.email})
+            await Board.find({ adminEmail: session.user.email })
         )
     }
     else{
         return Response.json([]);
+    }
+}
+
+async function getAllBoards(){
+    const session = await getServerSession(authOptions);
+    if(session?.user){
+        return Response.json(
+            await Board.find({
+                $or: [
+                    { adminEmail: session.user.email },
+                    { allowedEmails: session.user.email }
+                ]
+            })
+        )
     }
 }
 

@@ -2,8 +2,7 @@
 
 import Board from "@/app/components/Board"
 import {BoardInfoProvider} from "@/app/hooks/UseBoardInfo";
-import {AppContext, useNarrowHeader} from "@/app/hooks/AppContext";
-import {useContext, useEffect} from "react";
+import {useNarrowHeader} from "@/app/hooks/AppContext";
 
 export default function BoardPage(){
 

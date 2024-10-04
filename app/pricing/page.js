@@ -33,7 +33,6 @@ export default function Pricing(){
 
     return(
         <section className="my-16">
-            {/*{isPremium ? 1 : 0}*/}
             <h1 className="text-center text-4xl mb-8">Simple pricing</h1>
             <p className="text-center mb-4">Start for free, upgrade if you need</p>
             <div className="md:flex grid-cols-1 w-full justify-center md:gap-8 gap-2">

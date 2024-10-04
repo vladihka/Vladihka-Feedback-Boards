@@ -63,7 +63,6 @@ export default function BoardHeader({onNewFeedback}){
                             Make a suggestion
                         </Button>
                     )}
-
                 </div>
             </div>
         </>

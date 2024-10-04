@@ -12,7 +12,7 @@ export default function Attachment({link, showRemoveButton=false, handleRemoveFi
                 </button>
             )}
             {/.(jpg|png)$/.test(link) ? (
-                <img className="h-16 w-auto rounded-md" src={link}></img>
+                <img className="h-16 w-auto rounded-md" src={link} alt={""}></img>
                     ) : (
                 <div className="bg-gray-200 h-16 p-2 flex items-center rounded-md">
                     <PaperClip className="w-4 h-4"></PaperClip>

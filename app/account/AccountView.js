@@ -55,7 +55,7 @@ export default function AccountView () {
                         </div>
                         <div className="flex gap-4 p-2 w-full border-t border-black border-opacity-10 text-gray-700 text-sm">
                             <Link
-                                className="block w-full text-center flex gap-2 items-center justify-center"
+                                className="w-full text-center flex gap-2 items-center justify-center"
                                 href={'/account/edit-board/'+board._id}>
                                 <Edit className="w-4 h-4" />
                                 Edit
@@ -68,7 +68,7 @@ export default function AccountView () {
 
                 {canWeCreateBoard && (
                     <Link href={'/account/new-board'}
-                          className="block flex items-center justify-center bg-indigo-300 rounded-md shadow-sm py-2">
+                          className="flex items-center justify-center bg-indigo-300 rounded-md shadow-sm py-2">
                         <span>Add new board +</span>
                     </Link>
                 )}

@@ -1,5 +1,4 @@
 import {useContext, useEffect, useState} from "react";
-import Button from "./Button";
 import Avatar from "./Avatar";
 import CommentForm from "./CommentForm";
 import axios from "axios";

@@ -47,6 +47,5 @@ export async function POST(req) {
         await sub.save();
     }
 
-    //console.log({eventType});
     return new Response(null, {status:200});
 }

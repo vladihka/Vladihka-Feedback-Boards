@@ -1,6 +1,5 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
-import {headers} from "next/headers"
 import Header from "@/app/components/Header";
 import AuthProvider from "@/app/hooks/AuthProvider";
 import {AppContextProvider} from "@/app/hooks/AppContext";

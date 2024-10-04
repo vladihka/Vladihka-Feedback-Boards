@@ -141,7 +141,7 @@ export default function BoardForm({
                         </div>
                         <div className={"grow flex justify-end"}>
                             <BoardInfoContext.Provider value={{style}}>
-                                <Button primary
+                                <Button primary="true"
                                         className="text-sm"
                                         onClick={handleChangeGradientButtonClick}>
                                     <Edit className={"w-4 h-4"}/>Change header gradient
@@ -158,7 +158,7 @@ export default function BoardForm({
                     </div>
                 </div>
             </div>
-            <Button primary
+            <Button primary="true"
                     disabled={name === '' || slug === ''}
                     className="bg-primary px-6 py-2 w-full justify-center my-4">
                     {buttonText}

@@ -30,4 +30,3 @@ export default function BoardHeaderGradient({name, description, style}){
         </div>
     )
 }
-//
