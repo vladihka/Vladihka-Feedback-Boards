@@ -120,7 +120,7 @@ export default function BoardForm({
             {visibility === 'invite-only' && (
                 <div className="my-4">
                     <label>
-                        <div>Who should be able to access the board? Don't forget about your email :)</div>
+                        <div>Who should be able to access the board? Don&apos;t forget about your email :)</div>
                         <div className="text-sm text-gray-600">
                             List all email addresses seperated by new line
                         </div>
