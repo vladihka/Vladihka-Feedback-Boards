@@ -25,7 +25,7 @@ async function recountVotes(feedbackId){
 }
 
 export async function POST(request){
-    mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
     const jsonBody = await request.json();
     const {feedbackId} = jsonBody;
     const session = await getServerSession(authOptions);

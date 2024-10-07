@@ -7,7 +7,7 @@ import {Board} from "@/app/models/Board";
 import {Notification} from "@/app/models/Notification";
 
 export async function POST(req){
-    mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
     const jsonBody = await req.json();
     const session = await getServerSession(authOptions);
     if(!session){
@@ -34,7 +34,7 @@ export async function POST(req){
 }
 
 export async function PUT(req){
-    mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
     const jsonBody = await req.json();
     const session = await getServerSession(authOptions);
     if(!session){
@@ -55,7 +55,7 @@ export async function PUT(req){
 }
 
 export async function GET(req){
-    mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
     const url = new URL(req.url);
     if(url.searchParams.get('feedbackId')){
         const result = await Comment

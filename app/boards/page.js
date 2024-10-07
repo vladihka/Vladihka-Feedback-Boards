@@ -14,7 +14,7 @@ export default function BoardsPage(){
             if (status === 'unauthenticated') {
                 signIn('google');
             }
-            axios.get('/api/board').then(res => {
+            axios.get('/api/boards').then(res => {
                 setBoards(res.data);
             });
              axios.get('/api/subscription').then(res => {
@@ -37,7 +37,7 @@ export default function BoardsPage(){
     return (
         <>
             <h1 className="text-center text-4xl mb-8">All boards:</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
                 {boards.map(board => (
                     <div
                         key={'board-tile-'+board.name}

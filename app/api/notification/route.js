@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import {Notification} from "@/app/models/Notification";
 
 export async function GET(){
-    mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
     const session = await getServerSession(authOptions);
     if(!session){
         return new Response('Unauthorized', {status: 401})
@@ -20,7 +20,7 @@ export async function GET(){
 }
 
 export async function PUT(request){
-    mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
     const session = await getServerSession(authOptions);
     if(!session){
         return new Response('Unauthorized', {status: 401})

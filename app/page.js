@@ -4,6 +4,7 @@ import {useWideHeader} from "@/app/hooks/AppContext";
 import {useEffect} from "react";
 import {signOut} from "next-auth/react";
 import {useRouter} from "next/navigation";
+import Footer from "@/app/components/Footer";
 
 export default function Home() {
     useWideHeader();
@@ -16,20 +17,26 @@ export default function Home() {
         }
     }, []);
     return (
-        <section className="grid grid-cols-1 gap-24 text-center my-16">
-            <div className="">
-                <h1 className="text-4xl mb-4 leading-normal">Your users will love FeedbackBoards</h1>
-                <p className="text-gray-600 mb-8 max-w-xl mx-auto">Experience a seamless, collaborative solution for user requests. Say goodbye to outdated
-                    spreadsheets and chaotic boards. Empower your customers, gain priceless insights.</p>
-                <Link 
-                    href={'/account'}
-                    className="bg-primary text-white px-6 py-4 rounded-md">Try for free &rarr;</Link>
-            </div>
-            <div className="relative">
-                <img src="board.png" alt="" className="relative z-10 max-w-full md:max-w-lg mx-auto"/>
-                <div className="bg-indigo-400 bg-opacity-20 w-[320px] h-[320px] rounded-full
+        <>
+            <section className="grid grid-cols-1 gap-24 text-center my-16">
+                <div className="">
+                    <h1 className="text-4xl mb-4 leading-normal">Your users will love FeedbackBoards</h1>
+                    <p className="text-gray-600 mb-8 max-w-xl mx-auto">Experience a seamless, collaborative solution for
+                        user requests. Say goodbye to outdated
+                        spreadsheets and chaotic boards. Empower your customers, gain priceless insights.</p>
+                    <Link
+                        href={'/account'}
+                        className="bg-primary text-white px-6 py-4 rounded-md">Try for free &rarr;</Link>
+                </div>
+                <div className="relative">
+                    <img src="board.png" alt="" className="relative z-10 max-w-full md:max-w-lg mx-auto"/>
+                    <div className="bg-indigo-400 bg-opacity-20 w-[320px] h-[320px] rounded-full
                     absolute left-[50%] -ml-[160px] top-[50%] -mt-[160px]"></div>
-            </div>
-        </section>
+                </div>
+            </section>
+            {/*<div className={"bg-blue-100"}>*/}
+            {/*    <Footer></Footer>*/}
+            {/*</div>*/}
+        </>
     )
 }

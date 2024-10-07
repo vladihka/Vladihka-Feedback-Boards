@@ -16,23 +16,11 @@ async function getMyBoards(){
     }
 }
 
-async function getAllBoards(){
-    const session = await getServerSession(authOptions);
-    if(session?.user){
-        return Response.json(
-            await Board.find({
-                $or: [
-                    { adminEmail: session.user.email },
-                    { allowedEmails: session.user.email }
-                ]
-            })
-        )
-    }
-}
-
 export async function GET(request){
-    mongoose.connect(process.env.MONGO_URL);
+
+    await mongoose.connect(process.env.MONGO_URL);
     const url = new URL(request.url);
+
     if(url.searchParams.get('id')){
         const board = await Board.findById(url.searchParams.get('id'))
         return Response.json(board);
@@ -51,7 +39,7 @@ export async function GET(request){
 }
 
 export async function POST(request){
-    mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
     const session = await getServerSession(authOptions);
     if(!session){
         return Response.json(false);
@@ -71,7 +59,7 @@ export async function POST(request){
 }
 
 export async function PUT(request){
-    mongoose.connect(process.env.MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
     const session = await getServerSession(authOptions);
     if(!session){
         return Response.json(false);

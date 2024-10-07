@@ -10,7 +10,7 @@ export async function POST(request){
     const jsonBody = await request.json();
     const {title, description, uploads, boardName} = jsonBody;
     const mongoUrl = process.env.MONGO_URL;
-    mongoose.connect(mongoUrl);
+    await mongoose.connect(mongoUrl);
     const session = await getServerSession(authOptions);
     const userEmail = session.user.email;
     const boardDoc = await Board.findOne({slug:boardName});
@@ -25,7 +25,7 @@ export async function PUT(request){
     const jsonBody = await request.json();
     const {title, description, uploads, id, status} = jsonBody;
     const mongoUrl = process.env.MONGO_URL;
-    mongoose.connect(mongoUrl);
+    await mongoose.connect(mongoUrl);
     const session = await getServerSession(authOptions);
     if(!session){
         return Response.json(false);
@@ -54,7 +54,7 @@ export async function PUT(request){
 
 export async function GET(req){
     const mongoUrl = process.env.MONGO_URL;
-    mongoose.connect(mongoUrl);
+    await mongoose.connect(mongoUrl);
     const url = new URL(req.url);
     if(url.searchParams.get('id')){
         return Response.json(
@@ -69,7 +69,7 @@ export async function GET(req){
         const session = await getServerSession(authOptions);
         const board = await Board.findOne({slug:boardName})
         if(!canWeAccessThisBoard(session?.user?.email, board)){
-            return new Response('Unathorized', {status: 401});
+            return new Response('Unauthorized', {status: 401});
         }
         let sortDef = {};
         const filter = {boardName};

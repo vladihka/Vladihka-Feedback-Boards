@@ -6,7 +6,7 @@ import {useNarrowHeader} from "@/app/hooks/AppContext";
 
 export default function BoardPage(){
 
-    useNarrowHeader();
+    //useNarrowHeader();
 
     return (
         <BoardInfoProvider>

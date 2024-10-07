@@ -5,7 +5,7 @@ import {useNarrowHeader} from "@/app/hooks/AppContext";
 
 export default function FeedbackPage(){
 
-    useNarrowHeader();
+   // useNarrowHeader();
 
     return (
         <BoardInfoProvider>
