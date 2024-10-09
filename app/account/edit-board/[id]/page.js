@@ -22,6 +22,7 @@ export default function EditBoardPage(){
         await axios.put('/api/board', {
             id:board._id, ...boardData,
         });
+
         router.push('/account');
     }
 
