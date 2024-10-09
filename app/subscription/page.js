@@ -29,13 +29,13 @@ export default function SubscriptionPage(){
     }
 
     function manageSubscriptionButtonClick() {
-        axios.post('/api/portal').then(res => {
+        axios.post('/api/subscription').then(res => {
             window.location.href = res.data;
         });
     }
 
     function manageSubscriptionClick(){
-        axios.post('/api/portal').then(res => {
+        axios.post('/api/subscription').then(res => {
             window.location.href = res.data;
         })
     }
