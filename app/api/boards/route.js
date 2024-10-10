@@ -82,6 +82,8 @@ export async function DELETE(request) {
         return new Response('Unauthorized', { status: 403 });
     }
 
+    await Feedback.deleteMany({ boardName: board.name });
+
     await Board.findByIdAndDelete(id);
-    return new Response('Board deleted', { status: 200 });
+    return new Response('Board and associated feedback deleted', { status: 200 });
 }

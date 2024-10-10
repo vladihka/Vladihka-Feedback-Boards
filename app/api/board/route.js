@@ -10,7 +10,6 @@ async function getMyBoards(searchQuery = '') {
     if (session?.user) {
         const filter = { adminEmail: session.user.email };
 
-        // Если передан поисковый запрос, фильтруем по имени и описанию
         if (searchQuery) {
             filter.$or = [
                 { name: { $regex: searchQuery, $options: 'i' } },
@@ -74,7 +73,7 @@ export async function POST(request) {
     return Response.json(boardDoc);
 
   } catch (error) {
-    if (error.code === 11000) {  // Duplicate key error
+    if (error.code === 11000) { 
       return Response.json({ error: 'Board with this slug already exists' }, { status: 400 });
     } else {
       return Response.json({ error: 'Server error' }, { status: 500 });
@@ -105,7 +104,6 @@ export async function PUT(request) {
         return Response.json({ error: 'Недостаточно прав' }, { status: 403 });
     }
 
-    // Проверка существования slug
     const existingBoard = await Board.findOne({ slug });
     if (existingBoard && existingBoard._id !== id) {
         return Response.json({ error: 'Доска с таким именем уже существует' }, { status: 400 });
@@ -133,18 +131,17 @@ export async function DELETE(request) {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
 
-    // Проверяем, есть ли ID и находится ли он в базе данных
     const board = await Board.findById(id);
     if (!board) {
         return new Response('Board not found', { status: 404 });
     }
 
-    // Проверяем, является ли текущий пользователь администратором доски
     if (session.user.email !== board.adminEmail) {
         return new Response('Unauthorized', { status: 403 });
     }
 
-    // Удаляем доску
+    await Feedback.deleteMany({ boardName: board.name });
+
     await Board.findByIdAndDelete(id);
-    return new Response('Board deleted', { status: 200 });
+    return new Response('Board and associated feedback deleted', { status: 200 });
 }

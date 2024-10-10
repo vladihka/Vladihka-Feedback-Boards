@@ -19,7 +19,7 @@ export default function BoardsPage() {
         if (status === 'unauthenticated') {
             signIn('google');
         } else if (status === 'authenticated') {
-            fetchBoards(); // Запрашиваем доски при аутентификации
+            fetchBoards(); 
             fetchSubscription();
         }
     }, [status]);
