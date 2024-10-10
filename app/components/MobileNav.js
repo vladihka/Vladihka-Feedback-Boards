@@ -38,6 +38,7 @@ export default function MobileNav(){
                     <div className="bg-bgGray shadow-lg border max-w-sm mx-auto mt-4 rounded-lg py-4">
                         <nav className="">
                             <Link className="block py-4" href={'/'}>Home</Link>
+                            <Link href={'/boards'}>All boards</Link>
                             <Link className="block py-4" href={'/pricing'}>Pricing</Link>
                             <Link className="block py-4" href={'/help'}>Help</Link>
                             <Link className="block py-4" href={'/subscription'}>Subscription</Link>

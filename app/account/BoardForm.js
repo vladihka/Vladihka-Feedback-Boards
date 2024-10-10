@@ -89,7 +89,7 @@ export default function BoardForm({
                         <input type="text"
                                placeholder="board-name"
                                value={slug}
-                               onChange={ev => setSlug(ev.target.value)}
+                               onChange={ev => setSlug(ev.target.value.toLowerCase())}
                                className="py-2 bg-transparent flex grow"/>
                     </div>
                 </label>

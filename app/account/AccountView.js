@@ -19,7 +19,7 @@ export default function AccountView() {
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedSearchTerm(searchTerm);
-        }, 300); // Задержка в 300 мс
+        }, 300); 
 
         return () => {
             clearTimeout(handler);
@@ -34,7 +34,7 @@ export default function AccountView() {
             fetchBoards();
             fetchSubscription();
         }
-    }, [status, debouncedSearchTerm]); // Добавляем debouncedSearchTerm
+    }, [status, debouncedSearchTerm]); 
 
     const fetchBoards = async () => {
         const response = await axios.get(`/api/board?search=${debouncedSearchTerm}`);
@@ -134,7 +134,7 @@ export default function AccountView() {
                                 Edit
                             </Link>
                             <Link className="block w-full text-center border-l border-l-black border-opacity-10"
-                                  href={'/board/' + board.slug}>Visit &rarr;</Link>
+                                  href={'/board/'+board.slug}>Visit &rarr;</Link>
                             <button
                                 className="block w-full text-center border-l border-l-black border-opacity-10 text-red-600"
                                 onClick={() => handleDeleteBoard(board._id)}>

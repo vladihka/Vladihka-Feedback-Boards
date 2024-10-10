@@ -16,7 +16,7 @@ async function getAllBoards(searchTerm) {
         };
 
         if (searchTerm) {
-            query.name = { $regex: searchTerm, $options: 'i' }; // Поиск по имени с учетом регистра
+            query.name = { $regex: searchTerm, $options: 'i' }; 
         }
 
         const boards = await Board.find(query);
@@ -34,7 +34,7 @@ export async function GET(request) {
     await mongoose.connect(process.env.MONGO_URL);
     const url = new URL(request.url);
 
-    const searchTerm = url.searchParams.get('search'); // Получаем поисковый запрос
+    const searchTerm = url.searchParams.get('search');
 
     if (url.searchParams.get('id')) {
         const board = await Board.findById(url.searchParams.get('id'));
@@ -60,7 +60,7 @@ export async function GET(request) {
         });
     }
 
-    return await getAllBoards(searchTerm); // Передаем поисковый запрос в функцию
+    return await getAllBoards(searchTerm); 
 }
 
 export async function DELETE(request) {
@@ -73,18 +73,15 @@ export async function DELETE(request) {
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
 
-    // Проверяем, есть ли ID и находится ли он в базе данных
     const board = await Board.findById(id);
     if (!board) {
         return new Response('Board not found', { status: 404 });
     }
 
-    // Проверяем, является ли текущий пользователь администратором доски
     if (session.user.email !== board.adminEmail) {
         return new Response('Unauthorized', { status: 403 });
     }
 
-    // Удаляем доску
     await Board.findByIdAndDelete(id);
     return new Response('Board deleted', { status: 200 });
 }
