@@ -4,7 +4,7 @@ import './User';
 const feedbackSchema = new Schema({
     title: {type: String, required: true},
     description: {type: String},
-    status: {type: String, default: 'new'},
+    status: {type: String},
     uploads: {type: [String]},
     userEmail: {type: String, required: true},
     votesCountCached: {type: Number, default: 0},

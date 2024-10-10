@@ -31,6 +31,25 @@ export default function BoardForm({
     const [showGradientsPopup, setShowGradientsPopup] = useState(false);
     const [style, setStyle] = useState(defaultStyle || 'hyper')
 
+    const [errorPopupVisible, setErrorPopupVisible] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
+    async function handleFormSubmit(ev) {
+        ev.preventDefault();
+        
+        try {
+            await onSubmit(getBoardData());
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                setErrorMessage('A board with this name already exists. Please choose a different name.');
+                setErrorPopupVisible(true);
+            } else {
+                console.error(error);
+            }
+        }
+    }
+
+
     function getBoardData(){
         return {
             name,
@@ -41,12 +60,6 @@ export default function BoardForm({
             allowedEmails:allowedEmails.split("\n"),
         }
     }
-
-    async function handleFormSubmit(ev){
-        ev.preventDefault();
-        onSubmit(getBoardData());
-    }
-
     function handleArchiveButtonClick(ev){
         ev.preventDefault();
         axios.put('/api/board', {
@@ -64,7 +77,24 @@ export default function BoardForm({
     }
 
     return(
-        <form className="max-w-md mx-auto" onSubmit={handleFormSubmit}>
+        <>
+            {errorPopupVisible && (
+                <Popup setShow={setErrorPopupVisible}>
+                    <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-md">
+                        <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full mx-4">
+                            <h2 className="text-red-600 text-2xl font-bold mb-2 text-center">Error</h2>
+                            <p className="text-gray-800 text-lg mb-4 text-center">{errorMessage}</p>
+                            <Button 
+                                onClick={() => setErrorPopupVisible(false)} 
+                                className="bg-red-600 text-white hover:bg-red-700 w-full py-2 rounded-md transition duration-200 ease-in-out text-lg"
+                            >
+                                Close
+                            </Button>
+                        </div>
+                    </div>
+                </Popup>
+            )}
+            <form className="max-w-md mx-auto" onSubmit={handleFormSubmit}>
             {archived && (
                 <div className="border border-orange-400 bg-orange-200 rounded-md p-4 my-4">
                     This board is archived
@@ -202,5 +232,6 @@ export default function BoardForm({
                 </Popup>
             )}
         </form>
+        </>
     )
 }

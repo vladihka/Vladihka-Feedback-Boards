@@ -10,8 +10,7 @@ import { feedbackOpenNeeded, fetchSpecificFeedbacks, notifyIfBottomOfThePage, po
 import { FeedbacksFetchContext } from "../hooks/FeedbackFetchContext";
 import {useBoardSlug} from "@/app/hooks/UseBoardInfo";
 
-export default function Board({name}){
-  
+export default function Board({name}) {
     const [showFeedbackPopupItem, setShowFeedbackPopupItem] = useState(null);
     const [feedbacks, setFeedbacks] = useState([]);
     const [votesLoading, setVotesLoading] = useState(false);
@@ -25,7 +24,7 @@ export default function Board({name}){
     const everythingLoadedRef = useRef(false);
     const [searchPhrase, setSearchPhrase] = useState('');
     const searchPhraseRef = useRef('');
-    const debouncedFetchFeedbacksRef = useRef(debounce(fetchFeedbacks,300));
+    const debouncedFetchFeedbacksRef = useRef(debounce(fetchFeedbacks, 300));
     const waitingRef = useRef(false);
     const [waiting, setWaiting] = useState(true);
     const pathname = usePathname();
@@ -36,7 +35,7 @@ export default function Board({name}){
         fetchFeedbacks();
         const handleScroll = () => notifyIfBottomOfThePage(() => fetchFeedbacks(true));
         window.addEventListener('scroll', handleScroll);
-        return () => {window.removeEventListener('scroll', handleScroll);}
+        return () => {window.removeEventListener('scroll', handleScroll);};
     }, []);
 
     useEffect(() => {
@@ -44,49 +43,37 @@ export default function Board({name}){
     }, [feedbacks]);
 
     useEffect(() => {
-        if(feedbacksFetchCount === 0){
-            return;
-        }
+        if(feedbacksFetchCount === 0) return;
         loadedRows.current = 0;
         sortOrFilterRef.current = sortOrFilter;
         searchPhraseRef.current = searchPhrase;
         everythingLoadedRef.current = false;
-        if(feedbacks?.length > 0){
-            setFeedbacks([]);
-        }
+        if(feedbacks?.length > 0) setFeedbacks([]);
         setWaiting(true);
         waitingRef.current = true;
         debouncedFetchFeedbacksRef.current();
     }, [sortOrFilter, searchPhrase]);
 
     useEffect(() => {
-        if(feedbacksFetchCount === 0){
-            return;
-        }
+        if(feedbacksFetchCount === 0) return;
         const url = showFeedbackPopupItem 
             ? `/board/${slug}/feedback/${showFeedbackPopupItem._id}`
-            : '/board/'+slug;
+            : '/board/' + slug;
         window.history.pushState({}, '', url);
     }, [showFeedbackPopupItem]);
 
     useEffect(() => {
         const idToOpen = feedbackOpenNeeded(feedbacksFetchCount, pathname);
-        if(idToOpen){
-            fetchFeedback(idToOpen).then(setShowFeedbackPopupItem)
-        }
-    }, [feedbacksFetchCount])
+        if(idToOpen) fetchFeedback(idToOpen).then(setShowFeedbackPopupItem);
+    }, [feedbacksFetchCount]);
 
     useEffect(() => {
-        if(!session?.user?.email){
-            return;
-        }
+        if(!session?.user?.email) return;
         postLoginActions(fetchVotes, fetchFeedbacks, openFeedbackPopupItem);
     }, [session]);
 
-    async function fetchFeedbacks(append= false){
-        if(fetchingFeedbacksRef.current || everythingLoadedRef.current){
-            return;
-        }
+    async function fetchFeedbacks(append = false) {
+        if (fetchingFeedbacksRef.current || everythingLoadedRef.current) return;
         fetchingFeedbacksRef.current = true;
         setFetchingFeedbacks(true);
         fetchSpecificFeedbacks({
@@ -96,13 +83,9 @@ export default function Board({name}){
             search: searchPhraseRef.current,
         }).then(feedbacks => {
             setFeedbacksFetchCount(prevCount => prevCount + 1);
-            setFeedbacks(currentFeedbacks => append ? [...currentFeedbacks, ...feedbacks] : feedbacks)
-            if(feedbacks?.length > 0) {
-              loadedRows.current += feedbacks.length;
-            }
-            if(feedbacks?.length === 0){
-              everythingLoadedRef.current = true;
-            }
+            setFeedbacks(currentFeedbacks => append ? [...currentFeedbacks, ...feedbacks] : feedbacks);
+            if(feedbacks?.length > 0) loadedRows.current += feedbacks.length;
+            if(feedbacks?.length === 0) everythingLoadedRef.current = true;
             fetchingFeedbacksRef.current = false;
             setFetchingFeedbacks(false);
             waitingRef.current = false;
@@ -110,28 +93,27 @@ export default function Board({name}){
         });
     }
 
-    async function fetchVotes(){
+    async function fetchVotes() {
         setVotesLoading(true);
-        const ids = feedbacks.map(f => f._id)
-        const res = await axios.get('/api/vote?feedbackIds='+ids.join(','));
+        const ids = feedbacks.map(f => f._id);
+        const res = await axios.get('/api/vote?feedbackIds=' + ids.join(','));
         setVotes(res.data);
         setVotesLoading(false);
     }
 
-    function openFeedbackPopupItem(feedback){
+    function openFeedbackPopupItem(feedback) {
         setShowFeedbackPopupItem(feedback);
     }
 
-
-    async function handleFeedbackUpdate(newData){
-      setShowFeedbackPopupItem(prevData => {
-        return {...prevData, ...newData};
-      });
-      loadedRows.current = 0;
-      await fetchFeedbacks();
+    async function handleFeedbackUpdate(newData) {
+        setShowFeedbackPopupItem(prevData => {
+            return {...prevData, ...newData};
+        });
+        loadedRows.current = 0;
+        await fetchFeedbacks();
     }
 
-    async function reFetchFeedbacks(){
+    async function reFetchFeedbacks() {
         loadedRows.current = 0;
         sortOrFilterRef.current = sortOrFilter;
         searchPhraseRef.current = searchPhrase;
@@ -148,26 +130,26 @@ export default function Board({name}){
                 setSearchPhrase,}}> 
                 <BoardHeader onNewFeedback={reFetchFeedbacks}></BoardHeader>
             </FeedbacksFetchContext.Provider>
-              <div className="px-8">
-                  <BoardBody
-                      fetchingFeedbacks={fetchingFeedbacks}
-                      votes={votes}
-                      feedbacks={feedbacks}
-                      waiting={waiting}
-                      onFeedbackClick={openFeedbackPopupItem}
-                      votesLoading={votesLoading}
-                      onVotesChange={fetchVotes}>
-                  </BoardBody>
-              </div>
-          {showFeedbackPopupItem && (
-            <FeedbackItemPopup
-              {...showFeedbackPopupItem} 
-              votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id)}
-              onVotesChange={fetchVotes}
-              setShow={setShowFeedbackPopupItem}
-              onUpdate={handleFeedbackUpdate}>
-            </FeedbackItemPopup>
-          )}
-      </main>
-    )
+            <div className="px-8">
+                <BoardBody
+                    fetchingFeedbacks={fetchingFeedbacks}
+                    votes={votes}
+                    feedbacks={feedbacks}
+                    waiting={waiting}
+                    onFeedbackClick={openFeedbackPopupItem}
+                    votesLoading={votesLoading}
+                    onVotesChange={fetchVotes}>
+                </BoardBody>
+            </div>
+            {showFeedbackPopupItem && (
+                <FeedbackItemPopup
+                    {...showFeedbackPopupItem} 
+                    votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id)}
+                    onVotesChange={fetchVotes}
+                    setShow={setShowFeedbackPopupItem}
+                    onUpdate={handleFeedbackUpdate}>
+                </FeedbackItemPopup>
+            )}
+        </main>
+    );
 }

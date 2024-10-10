@@ -3,6 +3,7 @@ import {authOptions} from "@/app/api/auth/[...nextauth]/route";
 import mongoose from "mongoose";
 import {Board} from "@/app/models/Board";
 import {canWeAccessThisBoard} from "@/app/libs/boardApiFunctions";
+import { Feedback } from "@/app/models/Feedback";
 
 async function getMyBoards(searchQuery = '') {
     const session = await getServerSession(authOptions);
@@ -48,46 +49,79 @@ export async function GET(request) {
 }
 
 
-export async function POST(request){
+export async function POST(request) {
+  try {
     await mongoose.connect(process.env.MONGO_URL);
     const session = await getServerSession(authOptions);
-    if(!session){
-        return Response.json(false);
+    
+    if (!session) {
+      return Response.json(false);
     }
-    const jsonBody = await  request.json();
-    const {name, slug, description, visibility, allowedEmails, style} = jsonBody;
+
+    const jsonBody = await request.json();
+    const { name, slug, description, visibility, allowedEmails, style } = jsonBody;
+
     const boardDoc = await Board.create({
-        name,
-        slug,
-        description,
-        visibility,
-        style,
-        allowedEmails,
-        adminEmail: session.user.email,
-    })
+      name,
+      slug,
+      description,
+      visibility,
+      style,
+      allowedEmails,
+      adminEmail: session.user.email,
+    });
+
     return Response.json(boardDoc);
+
+  } catch (error) {
+    if (error.code === 11000) {  // Duplicate key error
+      return Response.json({ error: 'Board with this slug already exists' }, { status: 400 });
+    } else {
+      return Response.json({ error: 'Server error' }, { status: 500 });
+    }
+  }
 }
 
-export async function PUT(request){
+export async function PUT(request) {
     await mongoose.connect(process.env.MONGO_URL);
     const session = await getServerSession(authOptions);
-    if(!session){
-        return Response.json(false);
+
+    if (!session) {
+        return Response.json({ error: 'Пользователь не авторизован' }, { status: 401 });
     }
+
     const jsonBody = await request.json();
     const {
         id, name, slug, description, visibility, allowedEmails, archived, style,
     } = jsonBody;
+
     const board = await Board.findById(id);
-    if(session.user.email !== board.adminEmail){
-        return Response.json(false);
+    
+    if (!board) {
+        return Response.json({ error: 'Доска не найдена' }, { status: 404 });
     }
-    return Response.json(
-        await Board.findByIdAndUpdate(id, {
-            name, slug, description, visibility, allowedEmails, archived, style,
-        })
-    );
+
+    if (session.user.email !== board.adminEmail) {
+        return Response.json({ error: 'Недостаточно прав' }, { status: 403 });
+    }
+
+    // Проверка существования slug
+    const existingBoard = await Board.findOne({ slug });
+    if (existingBoard && existingBoard._id !== id) {
+        return Response.json({ error: 'Доска с таким именем уже существует' }, { status: 400 });
+    }
+
+    const updatedBoard = await Board.findByIdAndUpdate(id, {
+        name, slug, description, visibility, allowedEmails, archived, style,
+    }, { new: true });
+
+    if (updatedBoard) {
+        await Feedback.updateMany({ boardName: board.name }, { boardName: updatedBoard.name });
+    }
+
+    return Response.json(updatedBoard);
 }
+
 
 export async function DELETE(request) {
     await mongoose.connect(process.env.MONGO_URL);

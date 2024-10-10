@@ -8,7 +8,7 @@ export default function FaqQuestion({question, children}){
     return (
         <div className="rounded-lg overflow-hidden my-4">
             <button
-                className="block w-full flex gap-2 items-center bg-indigo-300 bg-opacity-50 md:text-xl p-4 cursor-pointer"
+                className="w-full flex gap-2 items-center bg-indigo-300 bg-opacity-50 md:text-xl p-4 cursor-pointer"
                 onClick={() => setIsOpen(prev => !prev)}>
                 {!isOpen && (
                     <ChevronDown className="w-6 h-6 text-indigo-800"></ChevronDown>
