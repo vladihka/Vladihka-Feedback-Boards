@@ -3,48 +3,37 @@ import {Subscription} from "@/app/models/Subscription";
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(req) {
-    let data;
-    let eventType;
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-    if (webhookSecret) {
-        let event;
-        let signature = req.headers.get("stripe-signature");
-        try {
-            event = stripe.webhooks.constructEvent(
-                await req.text(),
-                signature,
-                webhookSecret
-            );
-        } catch (err) {
-            console.log(`⚠️  Webhook signature verification failed.`);
-            return new Response(null, {status:400});
-        }
-        data = event.data;
-        eventType = event.type;
-    } else {
-        data = req.body.data;
-        eventType = req.body.type;
-    }
+    const sig = request.headers['stripe-signature'];
 
+  let event;
 
-    if (eventType === 'checkout.session.completed') {
-        const {userEmail} = data.object.metadata;
-        const {customer} = data.object;
-        console.log({eventType, data})
-        const sub = await Subscription.findOne({userEmail});
-        if (sub) {
-            sub.customer = customer;
-            await sub.save();
-        } else {
-            await Subscription.create({customer: customer, userEmail})
-        }
-    }
-    if (eventType === 'customer.subscription.updated') {
-        const {customer} = data.object
-        console.log({eventType, data})
-        const sub = await Subscription.findOne({customer});
-        sub.stripeSubscriptionData = data;
-        await sub.save();
-    }
+  try {
+    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+  } catch (err) {
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'plan.created':
+      const planCreated = event.data.object;
+      // Then define and call a function to handle the event plan.created
+      break;
+    case 'plan.deleted':
+      const planDeleted = event.data.object;
+      // Then define and call a function to handle the event plan.deleted
+      break;
+    case 'plan.updated':
+      const planUpdated = event.data.object;
+      // Then define and call a function to handle the event plan.updated
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  response.send();
     return new Response(null, {status:200});
 }
