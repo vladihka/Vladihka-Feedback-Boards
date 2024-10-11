@@ -39,7 +39,8 @@ export default function FeedbackItem({onOpen, _id, status, title, description, v
 
     const iVoted = !!votes.find(v => v.userEmail === session?.user?.email);
     const shortDesc = description.substring(0, 200);
-    const statusLabel = status[0].toUpperCase() + status.substring(1).replace('_', ' ');
+    const statusLabel = status ? 
+    (status[0].toUpperCase() + status.substring(1).replace('_', ' ')) :'new';
     let statusColor = 'bg-gray-400';
     if(status === 'planned') statusColor = 'bg-emerald-200';
     if(status === 'in_progress') statusColor = 'bg-amber-400';

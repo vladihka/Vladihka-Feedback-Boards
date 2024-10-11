@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import {Board} from "@/app/models/Board";
 import {canWeAccessThisBoard} from "@/app/libs/boardApiFunctions";
 import { Feedback } from "@/app/models/Feedback";
+import { Comment } from "@/app/models/Comment";
 
 async function getMyBoards(searchQuery = '') {
     const session = await getServerSession(authOptions);
@@ -140,8 +141,15 @@ export async function DELETE(request) {
         return new Response('Unauthorized', { status: 403 });
     }
 
+    const feedbacks = await Feedback.find({ boardName: board.name });
+
+    if (Array.isArray(feedbacks) && feedbacks.length > 0) {
+        await Comment.deleteMany({ feedbackId: { $in: feedbacks.map(fb => fb._id) } });
+    }
+
     await Feedback.deleteMany({ boardName: board.name });
 
     await Board.findByIdAndDelete(id);
-    return new Response('Board and associated feedback deleted', { status: 200 });
+
+    return new Response('Board, associated feedback, and comments deleted', { status: 200 });
 }
