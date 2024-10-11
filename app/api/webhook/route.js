@@ -46,6 +46,5 @@ export async function POST(req) {
         sub.stripeSubscriptionData = data;
         await sub.save();
     }
-
     return new Response(null, {status:200});
 }
