@@ -17,6 +17,7 @@ export default function Home() {
     }, []);
     return (
         <>
+        
             <section className="grid grid-cols-1 gap-24 text-center my-16">
                 <div className="">
                     <h1 className="text-4xl mb-4 leading-normal">Your users will love FeedbackBoards</h1>
