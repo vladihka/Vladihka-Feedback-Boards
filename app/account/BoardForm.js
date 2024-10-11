@@ -49,7 +49,6 @@ export default function BoardForm({
         }
     }
 
-
     function getBoardData(){
         return {
             name,

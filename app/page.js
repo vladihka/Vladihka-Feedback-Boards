@@ -4,7 +4,6 @@ import {useWideHeader} from "@/app/hooks/AppContext";
 import {useEffect} from "react";
 import {signOut} from "next-auth/react";
 import {useRouter} from "next/navigation";
-import Footer from "@/app/components/Footer";
 
 export default function Home() {
     useWideHeader();
@@ -34,9 +33,6 @@ export default function Home() {
                     absolute left-[50%] -ml-[160px] top-[50%] -mt-[160px]"></div>
                 </div>
             </section>
-            {/*<div className={"bg-blue-100"}>*/}
-            {/*    <Footer></Footer>*/}
-            {/*</div>*/}
         </>
     )
 }

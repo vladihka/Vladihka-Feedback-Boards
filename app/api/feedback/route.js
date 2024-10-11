@@ -43,20 +43,18 @@ export async function PUT(request) {
     const jsonBody = await request.json();
     const { id, newName, newSlug, ...rest } = jsonBody;
 
-    // Проверяем, существует ли новый feedback с таким же названием
     const existingFeedback = await Feedback.findOne({ title: newName });
     
     if (existingFeedback) {
-        // Создаем новый feedback
         const newFeedback = new Feedback({
             ...rest,
             title: newName,
-            boardId: existingFeedback.boardId, // Привязываем к новому ID доски
+            boardId: existingFeedback.boardId,
         });
         
-        await newFeedback.save(); // Сохраняем новый feedback
+        await newFeedback.save();
     } else {
-        // Обновляем существующий feedback
+        
         await Feedback.findByIdAndUpdate(id, {
             name: newName,
             slug: newSlug,

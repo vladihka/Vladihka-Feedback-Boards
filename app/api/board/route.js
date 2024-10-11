@@ -87,7 +87,7 @@ export async function PUT(request) {
     const session = await getServerSession(authOptions);
 
     if (!session) {
-        return Response.json({ error: 'Пользователь не авторизован' }, { status: 401 });
+        return Response.json({ error: 'User not authorized' }, { status: 401 });
     }
 
     const jsonBody = await request.json();
@@ -98,16 +98,16 @@ export async function PUT(request) {
     const board = await Board.findById(id);
     
     if (!board) {
-        return Response.json({ error: 'Доска не найдена' }, { status: 404 });
+        return Response.json({ error: 'Board not found' }, { status: 404 });
     }
 
     if (session.user.email !== board.adminEmail) {
-        return Response.json({ error: 'Недостаточно прав' }, { status: 403 });
+        return Response.json({ error: 'Not enough rights' }, { status: 403 });
     }
 
     const existingBoard = await Board.findOne({ slug });
     if (existingBoard && existingBoard._id !== id) {
-        return Response.json({ error: 'Доска с таким именем уже существует' }, { status: 400 });
+        return Response.json({ error: 'A board by that name already exists' }, { status: 400 });
     }
 
     const updatedBoard = await Board.findByIdAndUpdate(id, {

@@ -2,6 +2,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Board } from "@/app/models/Board";
 import mongoose from "mongoose";
+import { Comment } from "@/app/models/Comment";
+import { Feedback } from "@/app/models/Feedback";
 
 async function getAllBoards(searchTerm) {
     const session = await getServerSession(authOptions);
@@ -80,6 +82,10 @@ export async function DELETE(request) {
 
     if (session.user.email !== board.adminEmail) {
         return new Response('Unauthorized', { status: 403 });
+    }
+
+    if (Array.isArray(feedbacks) && feedbacks.length > 0) {
+        await Comment.deleteMany({ feedbackId: { $in: feedbacks.map(fb => fb._id) } });
     }
 
     await Feedback.deleteMany({ boardName: board.name });

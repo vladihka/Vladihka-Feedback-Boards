@@ -139,7 +139,7 @@ export default function BoardsPage() {
                             <button
                                 className={`block w-full text-center border-l border-l-black border-opacity-10 ${board.adminEmail === session?.user?.email ? 'text-red-600' : 'opacity-50 cursor-not-allowed text-gray-500'}`}
                                 onClick={() => handleDeleteBoard(board._id)}
-                                disabled={board.adminEmail !== session?.user?.email} // Кнопка неактивная для неадминистратора
+                                disabled={board.adminEmail !== session?.user?.email} 
                             >
                                 Delete
                             </button>
