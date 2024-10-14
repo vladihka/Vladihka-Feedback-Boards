@@ -1,60 +1,51 @@
-import { Subscription } from "@/app/models/Subscription";
+import {Subscription} from "@/app/models/Subscription";
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(req) {
+    let data;
+    let eventType;
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-    const signature = req.headers.get("stripe-signature");
-    let event;
-
-    try {
-        const body = await req.text();
-        event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err) {
-        console.error(`⚠️  Webhook signature verification failed: ${err.message}`);
-        return new Response('Webhook Error', { status: 400 });
+    if (webhookSecret) {
+        let event;
+        let signature = req.headers.get("stripe-signature");
+        try {
+            event = stripe.webhooks.constructEvent(
+                await req.text(),
+                signature,
+                webhookSecret
+            );
+        } catch (err) {
+            console.log(`⚠️  Webhook signature verification failed.`);
+            return new Response(null, {status:400});
+        }
+        data = event.data;
+        eventType = event.type;
+    } else {
+        data = req.body.data;
+        eventType = req.body.type;
     }
 
-    switch (event.type) {
-        case 'checkout.session.completed':
-            const checkoutSession = event.data.object;
-            const { userEmail } = checkoutSession.metadata;
-            const { customer } = checkoutSession;
 
-            try {
-                const sub = await Subscription.findOne({ userEmail });
-                if (sub) {
-                    sub.customer = customer;
-                    await sub.save();
-                } else {
-                    await Subscription.create({ customer, userEmail });
-                }
-            } catch (error) {
-                console.error('Error handling checkout.session.completed:', error);
-                return new Response('Internal Server Error', { status: 500 });
-            }
-            break;
-
-        case 'customer.subscription.updated':
-            const subscription = event.data.object;
-            const { customer: custId } = subscription;
-
-            try {
-                const sub = await Subscription.findOne({ customer: custId });
-                if (sub) {
-                    sub.stripeSubscriptionData = subscription;
-                    await sub.save();
-                } else {
-                    console.error('Subscription not found for customer:', custId);
-                }
-            } catch (error) {
-                console.error('Error handling customer.subscription.updated:', error);
-                return new Response('Internal Server Error', { status: 500 });
-            }
-            break;
-
-        default:
-            console.warn(`Unhandled event type ${event.type}`);
+    if (eventType === 'checkout.session.completed') {
+        const {userEmail} = data.object.metadata;
+        const {customer} = data.object;
+        console.log({eventType, data})
+        const sub = await Subscription.findOne({userEmail});
+        if (sub) {
+            sub.customer = customer;
+            await sub.save();
+        } else {
+            await Subscription.create({customer: customer, userEmail})
+        }
+    }
+    if (eventType === 'customer.subscription.updated') {
+        const {customer} = data.object
+        console.log({eventType, data})
+        const sub = await Subscription.findOne({customer});
+        sub.stripeSubscriptionData = data;
+        await sub.save();
     }
 
-    return new Response(null, { status: 200 });
+    return new Response(null, {status:200});
 }
