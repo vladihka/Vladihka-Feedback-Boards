@@ -5,7 +5,7 @@ const express = require('express');
 const app = express();
 
 // Секретный ключ для вебхука Stripe
-const endpointSecret = "whsec_30dc15541142aaeebcb68063ba1db035f9b2af0f008a367b847e4eeb5de632c6";
+const endpointSecret = "we_1Q9nlfHIWsMOn2FmObaXtKRK";
 
 app.post('/webhook', express.raw({ type: 'application/json' }), async (request, response) => {
     const sig = request.headers['stripe-signature']; // Получение подписи из заголовков
