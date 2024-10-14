@@ -5,7 +5,6 @@ import {Subscription} from "@/app/models/Subscription";
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const express = require('express');
 const mongoose = require('mongoose');
-const Subscription = require('./models/Subscription'); // Ваша модель для подписок
 const app = express();
 
 // Это ваш Stripe Webhook Secret для тестирования локально.
