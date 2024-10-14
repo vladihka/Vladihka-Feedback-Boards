@@ -15,20 +15,21 @@ export async function GET() {
 }
 
 export async function POST(req) {
-    const priceId = 'price_1Q5ntKHIWsMOn2FmlXT9Wxlr'; ///// price_1O5racHIWsMOn2FmMoqmoeat  price_1Q5ntKHIWsMOn2FmlXT9Wxlr
     const userSession = await getServerSession(authOptions);
     if (!userSession) {
-        return new Response('Unauthorized', {status:401});
+        return new Response('Unauthorized', { status: 401 });
     }
+    
+    const priceId = 'prod_QxjMV9acgKdoMt'; // убедитесь, что это правильный ID
     const stripeSession = await stripe.checkout.sessions.create({
         mode: 'subscription',
-        line_items:[{price:priceId,quantity:1}],
+        line_items: [{
+            price: priceId, // убедитесь, что ID действителен
+            quantity: 1,
+        }],
         success_url: process.env.NEXTAUTH_URL + '/subscription?success=1',
         cancel_url: process.env.NEXTAUTH_URL + '/subscription?cancel=1',
-        metadata: {userEmail:userSession?.user?.email},
-        subscription_data: {
-            metadata: {userEmail:userSession?.user?.email},
-        },
+        metadata: { userEmail: userSession?.user?.email },
     });
 
     return Response.json(stripeSession.url);
