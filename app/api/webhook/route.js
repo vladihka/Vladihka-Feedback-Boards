@@ -1,4 +1,5 @@
 // server.js
+import {Subscription} from "@/app/models/Subscription";
 
 // Устанавливаем Stripe библиотеку с вашим секретным ключом.
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
