@@ -1,83 +1,72 @@
-import { Subscription } from "@/app/models/Subscription"; // Импорт модели подписки
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Инициализация Stripe
+import { Subscription } from "@/app/models/Subscription";
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const express = require('express');
-const app = express();
+export default async function handler(req, res) {
+    let data;
+    let eventType;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-// Секретный ключ для вебхука Stripe
-const endpointSecret = "whsec_30dc15541142aaeebcb68063ba1db035f9b2af0f008a367b847e4eeb5de632c6";
+    if (req.method === 'POST') {
+        if (webhookSecret) {
+            let event;
+            const signature = req.headers['stripe-signature'];
+            try {
+                event = stripe.webhooks.constructEvent(
+                    req.body,
+                    signature,
+                    webhookSecret
+                );
+            } catch (err) {
+                console.log(`⚠️  Webhook signature verification failed: ${err.message}`);
+                return res.status(400).send(`Webhook Error: ${err.message}`);
+            }
+            data = event.data;
+            eventType = event.type;
+        } else {
+            data = req.body.data;
+            eventType = req.body.type;
+        }
 
-app.post('/webhook', express.raw({ type: 'application/json' }), async (request, response) => {
-    const sig = request.headers['stripe-signature']; // Получение подписи из заголовков
-
-    let event;
-
-    try {
-        // Проверка подписи и создание события
-        event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-    } catch (err) {
-        response.status(400).send(`Webhook Error: ${err.message}`);
-        return;
-    }
-
-    // Обработка события
-    switch (event.type) {
-        case 'checkout.session.completed':
-            const checkoutSessionCompleted = event.data.object;
-            const { userEmail } = checkoutSessionCompleted.metadata; // Извлечение email пользователя из метаданных
-            const { customer } = checkoutSessionCompleted; // Извлечение идентификатора клиента
-            
-            console.log({ eventType: event.type, data: event.data });
+        if (eventType === 'checkout.session.completed') {
+            const { userEmail } = data.object.metadata;
+            const { customer } = data.object;
+            console.log({ eventType, data });
 
             try {
-                // Поиск подписки по email пользователя
                 const sub = await Subscription.findOne({ userEmail });
                 if (sub) {
-                    // Если подписка существует, обновляем customer
                     sub.customer = customer;
                     await sub.save();
                 } else {
-                    // Если подписка не найдена, создаем новую запись
                     await Subscription.create({ customer, userEmail });
                 }
             } catch (err) {
-                console.error('Ошибка при обработке checkout.session.completed:', err);
-                response.status(500).send('Internal Server Error');
-                return;
+                console.error('Ошибка при обработке подписки:', err);
+                return res.status(500).send('Internal Server Error');
             }
-            break;
+        }
 
-        case 'customer.subscription.updated':
-            const customerSubscriptionUpdated = event.data.object;
-            const { customer: updatedCustomer } = customerSubscriptionUpdated; // Извлечение идентификатора клиента из события
-            
-            console.log({ eventType: event.type, data: event.data });
+        if (eventType === 'customer.subscription.updated') {
+            const { customer } = data.object;
+            console.log({ eventType, data });
 
             try {
-                // Поиск подписки по идентификатору клиента
-                const sub = await Subscription.findOne({ customer: updatedCustomer });
+                const sub = await Subscription.findOne({ customer });
                 if (sub) {
-                    // Обновление данных подписки
-                    sub.stripeSubscriptionData = customerSubscriptionUpdated;
+                    sub.stripeSubscriptionData = data;
                     await sub.save();
                 } else {
-                    console.error('Подписка не найдена для клиента:', updatedCustomer);
+                    console.error('Подписка не найдена для клиента:', customer);
                 }
             } catch (err) {
                 console.error('Ошибка при обновлении подписки:', err);
-                response.status(500).send('Internal Server Error');
-                return;
+                return res.status(500).send('Internal Server Error');
             }
-            break;
+        }
 
-        default:
-            console.log(`Unhandled event type ${event.type}`);
+        return res.status(200).send();
+    } else {
+        res.setHeader('Allow', ['POST']);
+        return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
-
-    // Возвращаем 200 ответ, чтобы подтвердить получение события
-    response.status(200).send();
-});
-
-// Запуск сервера на порту 4242
-app.listen(4242, () => console.log('Running on port 4242'));
-
+}
