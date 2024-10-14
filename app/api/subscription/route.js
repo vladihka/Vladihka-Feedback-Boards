@@ -20,7 +20,7 @@ export async function POST(req) {
         return new Response('Unauthorized', { status: 401 });
     }
     
-    const priceId = 'price_1Q5ntKHIWsMOn2FmlXT9Wxlr'; // убедитесь, что это правильный ID
+    const priceId = 'prod_QxjMV9acgKdoMt'; // убедитесь, что это правильный ID
     const stripeSession = await stripe.checkout.sessions.create({
         mode: 'subscription',
         line_items: [{
