@@ -1,38 +1,32 @@
 import { Subscription } from "@/app/models/Subscription";
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-import express from 'express';
 
-const app = express();
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+export async function POST(req) {
     let data;
     let eventType;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-    // Проверяем подпись вебхука, если есть секретный ключ
     if (webhookSecret) {
         let event;
-        const signature = req.headers['stripe-signature'];
+        let signature = req.headers.get("stripe-signature");
         try {
-            // Проверка события Stripe с помощью подписи и секретного ключа
             event = stripe.webhooks.constructEvent(
-                req.body, // для express.raw используем req.body
+                await req.text(), // Для получения "сырых" данных из запроса
                 signature,
                 webhookSecret
             );
         } catch (err) {
             console.log(`⚠️  Webhook signature verification failed: ${err.message}`);
-            return res.status(400).send(`Webhook Error: ${err.message}`);
+            return new Response(null, { status: 400 });
         }
         data = event.data;
         eventType = event.type;
     } else {
-        // Если секретного ключа нет, берем данные напрямую из тела запроса (например, для тестов)
+        // Если секретного ключа нет, используем данные напрямую из тела запроса
         data = req.body.data;
         eventType = req.body.type;
     }
 
-    // Обрабатываем событие 'checkout.session.completed'
     if (eventType === 'checkout.session.completed') {
         const { userEmail } = data.object.metadata;
         const { customer } = data.object;
@@ -52,11 +46,10 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
             }
         } catch (err) {
             console.error('Ошибка при обработке подписки:', err);
-            return res.status(500).send('Internal Server Error');
+            return new Response(null, { status: 500 });
         }
     }
 
-    // Обрабатываем событие 'customer.subscription.updated'
     if (eventType === 'customer.subscription.updated') {
         const { customer } = data.object;
 
@@ -74,13 +67,10 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
             }
         } catch (err) {
             console.error('Ошибка при обновлении подписки:', err);
-            return res.status(500).send('Internal Server Error');
+            return new Response(null, { status: 500 });
         }
     }
 
     // Возвращаем успешный ответ
-    return res.status(200).send();
-});
-
-// Запуск сервера на порту 4242
-app.listen(4242, () => console.log('Server is running on port 4242'));
+    return new Response(null, { status: 200 });
+}
