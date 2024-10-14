@@ -52,6 +52,7 @@ export async function POST(req) {
             }
             break;
 
+            
         default:
             console.warn(`Unhandled event type ${event.type}`);
     }
