@@ -2,35 +2,27 @@ import { Subscription } from "@/app/models/Subscription";
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
-    let data;
-    let eventType;
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
+    // Обработка только POST запросов
     if (req.method === 'POST') {
-        if (webhookSecret) {
-            let event;
-            const signature = req.headers['stripe-signature'];
-            try {
-                event = stripe.webhooks.constructEvent(
-                    req.body,
-                    signature,
-                    webhookSecret
-                );
-            } catch (err) {
-                console.log(`⚠️  Webhook signature verification failed: ${err.message}`);
-                return res.status(400).send(`Webhook Error: ${err.message}`);
-            }
-            data = event.data;
-            eventType = event.type;
-        } else {
-            data = req.body.data;
-            eventType = req.body.type;
+        let event;
+
+        const signature = req.headers['stripe-signature'];
+
+        try {
+            // Проверяем подпись вебхука
+            event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET);
+        } catch (err) {
+            console.error(`⚠️  Webhook signature verification failed: ${err.message}`);
+            return res.status(400).send(`Webhook Error: ${err.message}`);
         }
 
+        const data = event.data;
+        const eventType = event.type;
+
+        // Обрабатываем события
         if (eventType === 'checkout.session.completed') {
             const { userEmail } = data.object.metadata;
             const { customer } = data.object;
-            console.log({ eventType, data });
 
             try {
                 const sub = await Subscription.findOne({ userEmail });
@@ -44,11 +36,8 @@ export default async function handler(req, res) {
                 console.error('Ошибка при обработке подписки:', err);
                 return res.status(500).send('Internal Server Error');
             }
-        }
-
-        if (eventType === 'customer.subscription.updated') {
+        } else if (eventType === 'customer.subscription.updated') {
             const { customer } = data.object;
-            console.log({ eventType, data });
 
             try {
                 const sub = await Subscription.findOne({ customer });
