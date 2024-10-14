@@ -1,28 +1,24 @@
 import { Subscription } from "@/app/models/Subscription";
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-export default async function handler(req, res) {
-    // Обработка только POST запросов
-    if (req.method === 'POST') {
-        let event;
+export async function POST(req) {
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const signature = req.headers.get("stripe-signature");
+    let event;
 
-        const signature = req.headers['stripe-signature'];
+    try {
+        const body = await req.text();
+        event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    } catch (err) {
+        console.error(`⚠️  Webhook signature verification failed: ${err.message}`);
+        return new Response('Webhook Error', { status: 400 });
+    }
 
-        try {
-            // Проверяем подпись вебхука
-            event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET);
-        } catch (err) {
-            console.error(`⚠️  Webhook signature verification failed: ${err.message}`);
-            return res.status(400).send(`Webhook Error: ${err.message}`);
-        }
-
-        const data = event.data;
-        const eventType = event.type;
-
-        // Обрабатываем события
-        if (eventType === 'checkout.session.completed') {
-            const { userEmail } = data.object.metadata;
-            const { customer } = data.object;
+    switch (event.type) {
+        case 'checkout.session.completed':
+            const checkoutSession = event.data.object;
+            const { userEmail } = checkoutSession.metadata;
+            const { customer } = checkoutSession;
 
             try {
                 const sub = await Subscription.findOne({ userEmail });
@@ -32,30 +28,33 @@ export default async function handler(req, res) {
                 } else {
                     await Subscription.create({ customer, userEmail });
                 }
-            } catch (err) {
-                console.error('Ошибка при обработке подписки:', err);
-                return res.status(500).send('Internal Server Error');
+            } catch (error) {
+                console.error('Error handling checkout.session.completed:', error);
+                return new Response('Internal Server Error', { status: 500 });
             }
-        } else if (eventType === 'customer.subscription.updated') {
-            const { customer } = data.object;
+            break;
+
+        case 'customer.subscription.updated':
+            const subscription = event.data.object;
+            const { customer: custId } = subscription;
 
             try {
-                const sub = await Subscription.findOne({ customer });
+                const sub = await Subscription.findOne({ customer: custId });
                 if (sub) {
-                    sub.stripeSubscriptionData = data;
+                    sub.stripeSubscriptionData = subscription;
                     await sub.save();
                 } else {
-                    console.error('Подписка не найдена для клиента:', customer);
+                    console.error('Subscription not found for customer:', custId);
                 }
-            } catch (err) {
-                console.error('Ошибка при обновлении подписки:', err);
-                return res.status(500).send('Internal Server Error');
+            } catch (error) {
+                console.error('Error handling customer.subscription.updated:', error);
+                return new Response('Internal Server Error', { status: 500 });
             }
-        }
+            break;
 
-        return res.status(200).send();
-    } else {
-        res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${req.method} Not Allowed`);
+        default:
+            console.warn(`Unhandled event type ${event.type}`);
     }
+
+    return new Response(null, { status: 200 });
 }
